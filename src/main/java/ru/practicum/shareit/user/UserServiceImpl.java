@@ -11,7 +11,6 @@ import ru.practicum.shareit.user.dto.UserDto;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -51,6 +50,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto findUser(Integer id) {
+        checkUser(id);
         return userMapper.toDto(repository.findUser(id));
     }
 
@@ -90,8 +90,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    @Override
-    public void checkUser(Integer id) {
+    private void checkUser(Integer id) {
         User user = repository.findUser(id);
         if (user == null) {
             throw new UserNotFoundException("Пользователь не найден.");

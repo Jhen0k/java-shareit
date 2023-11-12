@@ -8,15 +8,14 @@ import java.util.*;
 @Repository
 @RequiredArgsConstructor
 public class UserRepositoryImpl implements UserRepository {
-    private final GenerateUserId generateUserId;
+    private int id = 1;
     private final Map<Integer, User> users = new HashMap<>();
 
     @Override
     public User save(User user) {
-        Integer id = generateUserId.getId();
-        user.setId(id);
-        users.put(id, user);
-        return users.get(id);
+        user.setId(id++);
+        users.put(user.getId(), user);
+        return user;
     }
 
     @Override

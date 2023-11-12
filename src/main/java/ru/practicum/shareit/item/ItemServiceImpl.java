@@ -10,7 +10,6 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.mappers.ItemMapper;
 import ru.practicum.shareit.user.UserService;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,7 +23,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto createItem(ItemDto itemDto, Integer userId) {
-        userService.checkUser(userId);
+        userService.findUser(userId);
         Item item = itemMapper.toEntity(itemDto);
 
         checkValidateItem(item);
@@ -34,14 +33,12 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto updateItem(ItemDto itemDto, int userId, int itemId) {
-        userService.checkUser(userId);
+        userService.findUser(userId);
         checkItemByUser(userId, itemId);
         itemDto.setOwnerId(userId);
         Item item = itemMapper.toEntity(itemDto);
 
-        if (item.getName() != null) itemStorage.updateNameItem(itemId, item.getName());
-        if (item.getDescription() != null) itemStorage.updateDescriptionItem(itemId, item.getDescription());
-        if (item.getAvailable() != null) itemStorage.updateAvailableItem(itemId, item.getAvailable());
+        itemStorage.updateItem(itemId, item);
         return itemMapper.toDto(itemStorage.findItem(itemId));
     }
 
@@ -52,7 +49,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemDto> findAllItemForOwner(int userId) {
-        userService.checkUser(userId);
+        userService.findUser(userId);
 
         return itemStorage.findAllItemForOwner(userId).stream()
                 .map(itemMapper::toDto)
@@ -61,8 +58,6 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemDto> searchAvailableItem(String text) {
-        if (text == null || text.isBlank()) return new ArrayList<>();
-
         return itemStorage.searchAvailableItem(text.toLowerCase()).stream()
                 .filter(Item::getAvailable)
                 .map(itemMapper::toDto)

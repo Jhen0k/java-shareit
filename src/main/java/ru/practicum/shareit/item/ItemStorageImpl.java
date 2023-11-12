@@ -12,12 +12,12 @@ import java.util.stream.Collectors;
 @Repository
 @RequiredArgsConstructor
 public class ItemStorageImpl implements ItemStorage {
-    private final GenerateItemId generateItemId;
+    private int id = 1;
     private final Map<Integer, Item> items = new HashMap<>();
 
     @Override
     public Item createItem(Item item) {
-        item.setId(generateItemId.getId());
+        item.setId(id++);
         items.put(item.getId(), item);
         return item;
     }
@@ -38,24 +38,21 @@ public class ItemStorageImpl implements ItemStorage {
     }
 
     @Override
-    public void updateNameItem(int itemId, String name) {
+    public void updateItem(Integer itemId, Item newItem) {
         Item item = items.get(itemId);
-        item.setName(name);
-        items.put(itemId, item);
-    }
 
-    @Override
-    public void updateDescriptionItem(int itemId, String description) {
-        Item item = items.get(itemId);
-        item.setDescription(description);
-        items.put(itemId, item);
-    }
-
-    @Override
-    public void updateAvailableItem(int itemId, boolean isAvailable) {
-        Item item = items.get(itemId);
-        item.setAvailable(isAvailable);
-        items.put(itemId, item);
+        if (newItem.getName() != null) {
+            item.setName(newItem.getName());
+            items.put(itemId, item);
+        }
+        if (newItem.getDescription() != null) {
+            item.setDescription(newItem.getDescription());
+            items.put(itemId, item);
+        }
+        if (newItem.getAvailable() != null) {
+            item.setAvailable(newItem.getAvailable());
+            items.put(itemId, item);
+        }
     }
 
     @Override

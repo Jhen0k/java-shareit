@@ -12,11 +12,7 @@ public interface ItemStorage {
 
     List<Item> searchAvailableItem(String text);
 
-    void updateNameItem(int itemId, String name);
-
-    void updateDescriptionItem(int itemId, String description);
-
-    void updateAvailableItem(int itemId, boolean isAvailable);
+    void updateItem(Integer itemId, Item newItem);
 
     Item findItem(int itemId);
 }
