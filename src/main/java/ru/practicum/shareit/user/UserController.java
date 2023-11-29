@@ -19,18 +19,8 @@ import java.util.List;
 public class UserController {
     private final UserService userService;
 
-    @GetMapping
-    public List<UserDto> getAllUsers() {
-        return userService.getAllUsers();
-    }
-
-    @GetMapping("/{id}")
-    public UserDto getUserById(@PathVariable Integer id) {
-        return userService.findUser(id);
-    }
-
     @PostMapping
-    public UserDto saveNewUser(@RequestBody UserDto user) {
+    public UserDto creatUser(@RequestBody UserDto user) {
         return userService.createUser(user);
     }
 
@@ -38,6 +28,17 @@ public class UserController {
     public UserDto updateUser(@PathVariable Integer id, @RequestBody UserDto user) {
         return userService.updateUser(id, user);
     }
+
+    @GetMapping("/{id}")
+    public UserDto getUserById(@PathVariable Integer id) {
+        return userService.findUser(id);
+    }
+
+    @GetMapping
+    public List<UserDto> getAllUsers() {
+        return userService.getAllUsers();
+    }
+
 
     @DeleteMapping("/{userId}")
     public void deleteUser(@PathVariable Integer userId) {

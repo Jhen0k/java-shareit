@@ -3,14 +3,15 @@ package ru.practicum.shareit.user;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.exception.UniqueEmailException;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.UserNotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.mappers.UserMapper;
 import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.model.User;
 
 import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -21,39 +22,37 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
 
 
+    @Transactional
     @Override
     public UserDto createUser(UserDto user) {
         User userEntity = userMapper.toEntity(user);
         validateUser(userEntity);
-        validateEmail(userEntity);
         return userMapper.toDto(repository.save(userEntity));
     }
 
     @Override
-    public UserDto updateUser(Integer id, UserDto user) {
+    public UserDto updateUser(Integer id, UserDto userDto) {
         checkUser(id);
-        user.setId(id);
-        User updatedUser = userMapper.toEntity(user);
-        User oldUser = repository.findUser(id);
-        if (user.getEmail() != null && user.getName() != null) {
-            return userMapper.toDto(repository.updateUser(id, updatedUser));
-        } else if (user.getName() != null) {
-            updatedUser.setName(user.getName());
-            updatedUser.setEmail(oldUser.getEmail());
-        } else if (user.getEmail() != null) {
-            validateEmail(userMapper.toEntity(user));
-            updatedUser.setName(oldUser.getName());
-            updatedUser.setEmail(user.getEmail());
+        userDto.setId(id);
+        User updatedUser = userMapper.toEntity(userDto);
+        User oldUser = Optional.of(repository.findById(id)).get().orElseThrow();
+
+        if (updatedUser.getName() != null) {
+            oldUser.setName(updatedUser.getName());
         }
-        return userMapper.toDto(repository.updateUser(id, updatedUser));
+        if (updatedUser.getEmail() != null) {
+            oldUser.setEmail(updatedUser.getEmail());
+        }
+        return userMapper.toDto(repository.save(oldUser));
     }
 
     @Override
     public UserDto findUser(Integer id) {
         checkUser(id);
-        return userMapper.toDto(repository.findUser(id));
+        return userMapper.toDto(repository.getById(id));
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<UserDto> getAllUsers() {
         return repository.findAll().stream().map(userMapper::toDto).collect(Collectors.toList());
@@ -62,7 +61,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUser(Integer id) {
         checkUser(id);
-        repository.deleteUser(id);
+        repository.deleteById(id);
     }
 
     private void validateUser(User user) {
@@ -75,24 +74,8 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    private void validateEmail(User user) {
-        List<User> users = repository.findAll();
-
-        if (user.getId() != null) {
-            users = users.stream().filter(user1 -> !Objects.equals(user1.getId(), user.getId()))
-                    .collect(Collectors.toList());
-        }
-
-        List<String> emails = users.stream().map(User::getEmail).collect(Collectors.toList());
-
-        if (emails.contains(user.getEmail())) {
-            throw new UniqueEmailException("Пользователь с таким Email уже существует");
-        }
-    }
-
     private void checkUser(Integer id) {
-        User user = repository.findUser(id);
-        if (user == null) {
+        if (!repository.existsById(id)) {
             throw new UserNotFoundException("Пользователь не найден.");
         }
     }

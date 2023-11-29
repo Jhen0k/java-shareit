@@ -8,27 +8,31 @@ import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.mappers.ItemMapper;
+import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.UserService;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
-    private final ItemStorage itemStorage;
+    private final ItemRepository itemRepository;
+    private final UserRepository userRepository;
+    private final CommentRepository commentRepository;
     private final UserService userService;
     private final ItemMapper itemMapper;
 
     @Override
     public ItemDto createItem(ItemDto itemDto, Integer userId) {
+        checkValidateItem(itemDto);
         userService.findUser(userId);
+        itemDto.setOwnerId(userId);
         Item item = itemMapper.toEntity(itemDto);
 
-        checkValidateItem(item);
-        item.setOwnerId(userId);
-        return itemMapper.toDto(itemStorage.createItem(item));
+        return itemMapper.toDto(itemRepository.save(item));
     }
 
     @Override
@@ -36,45 +40,56 @@ public class ItemServiceImpl implements ItemService {
         userService.findUser(userId);
         checkItemByUser(userId, itemId);
         itemDto.setOwnerId(userId);
-        Item item = itemMapper.toEntity(itemDto);
+        Item itemUpdate = itemMapper.toEntity(itemDto);
+        Item itemOld = Optional.of(itemRepository.findById(itemId)).get().orElseThrow();
 
-        itemStorage.updateItem(itemId, item);
-        return itemMapper.toDto(itemStorage.findItem(itemId));
+        if (itemUpdate.getName() != null) {
+            itemOld.setName(itemUpdate.getName());
+        }
+        if (itemUpdate.getDescription() != null) {
+            itemOld.setDescription(itemUpdate.getDescription());
+        }
+        if (itemUpdate.getAvailable() != null) {
+            itemOld.setAvailable(itemUpdate.getAvailable());
+        }
+
+        ItemDto itemDtoUpdate = itemMapper.toDto(itemRepository.save(itemOld));
+        /*itemDtoUpdate.setComments(commentListMapper
+                .toListDto(commentRepository.findAllByItemId(itemOld.getId())));*/
+
+        return itemDtoUpdate;
     }
 
     @Override
     public ItemDto findItem(int itemId) {
-        return itemMapper.toDto(itemStorage.findItem(itemId));
+        return itemMapper.toDto(itemRepository.getById(itemId));
     }
 
     @Override
     public List<ItemDto> findAllItemForOwner(int userId) {
-        userService.findUser(userId);
+        Optional.of(userRepository.findById(userId)).get().orElseThrow();
+        List<Item> items = itemRepository.findItemByOwnerId(userId);
 
-        return itemStorage.findAllItemForOwner(userId).stream()
+        return items.stream()
                 .map(itemMapper::toDto)
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<ItemDto> searchAvailableItem(String text) {
-        return itemStorage.searchAvailableItem(text.toLowerCase()).stream()
+        return itemRepository.searchByNameAndDescriptionAndAvailable(text).stream()
                 .filter(Item::getAvailable)
                 .map(itemMapper::toDto)
                 .collect(Collectors.toList());
     }
 
     private void checkItemByUser(int userId, int itemId) {
-        List<Item> itemsByUser = itemStorage.findAllItemForOwner(userId);
-
-        Item findItem = itemsByUser.stream()
-                .filter(item -> item.getId() == itemId)
-                .findFirst()
-                .orElse(null);
-        if (findItem == null) throw new ItemNotFoundException("Запрашиваемая вещь отсутствует у пользователя");
+        if (!itemRepository.existsItemByIdAndOwnerId(itemId, userId)) {
+            throw new ItemNotFoundException("Запрашиваемая вещь отсутствует у данного пользователя");
+        }
     }
 
-    private void checkValidateItem(Item item) {
+    private void checkValidateItem(ItemDto item) {
         if (item.getName() == null || item.getName().isBlank()) {
             log.error("Ошибка добавления предмета.");
             throw new ValidationException("Предмета вещи не может быть пустым");
