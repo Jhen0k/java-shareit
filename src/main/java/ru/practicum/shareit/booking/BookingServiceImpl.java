@@ -153,7 +153,7 @@ public class BookingServiceImpl implements BookingService {
     public void checkValidateBooking(BookingRequestDto bookingDto, Integer userId) {
         Optional.of(userRepository.findById(userId)).get().orElseThrow();
         Optional.of(itemRepository.findById(bookingDto.getItemId())).get().orElseThrow();
-        Integer ownerId = itemService.findItem(bookingDto.getItemId()).getOwnerId();
+        Integer ownerId = itemService.findItem(bookingDto.getItemId()).getOwnerId().getId();
 
         if (ownerId == userId) {
             throw new UserNotFoundException("Владелец не может забронировать собственную вещь");

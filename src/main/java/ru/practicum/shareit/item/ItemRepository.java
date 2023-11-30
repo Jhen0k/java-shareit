@@ -15,8 +15,8 @@ public interface ItemRepository extends JpaRepository<Item, Integer> {
             "and i.available is true")
     List<Item> searchByNameAndDescriptionAndAvailable(String text);
 
-    boolean existsItemByIdAndAvailableIsTrue(long itemId);
+    boolean existsItemByIdAndAvailableIsTrue(int itemId);
 
-    boolean existsItemByIdAndOwnerId(long itemId, long userId);
+    boolean existsItemByIdAndOwnerId(int itemId, int userId);
 
 }

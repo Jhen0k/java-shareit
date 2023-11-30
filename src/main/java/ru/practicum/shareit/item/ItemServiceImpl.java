@@ -4,12 +4,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.ItemNotFoundException;
+import ru.practicum.shareit.exception.UserNotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.mappers.CommentListMapper;
 import ru.practicum.shareit.mappers.ItemMapper;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.UserService;
+import ru.practicum.shareit.user.model.User;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,14 +25,15 @@ public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
-    private final UserService userService;
     private final ItemMapper itemMapper;
+    private final CommentListMapper commentListMapper;
 
     @Override
     public ItemDto createItem(ItemDto itemDto, Integer userId) {
         checkValidateItem(itemDto);
-        userService.findUser(userId);
-        itemDto.setOwnerId(userId);
+        checkUser(userId);
+        User user = userRepository.findById(userId).orElseThrow();
+        itemDto.setOwnerId(user);
         Item item = itemMapper.toEntity(itemDto);
 
         return itemMapper.toDto(itemRepository.save(item));
@@ -37,9 +41,10 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto updateItem(ItemDto itemDto, int userId, int itemId) {
-        userService.findUser(userId);
         checkItemByUser(userId, itemId);
-        itemDto.setOwnerId(userId);
+        checkUser(userId);
+        User user = userRepository.findById(userId).orElseThrow();
+        itemDto.setOwnerId(user);
         Item itemUpdate = itemMapper.toEntity(itemDto);
         Item itemOld = Optional.of(itemRepository.findById(itemId)).get().orElseThrow();
 
@@ -54,8 +59,8 @@ public class ItemServiceImpl implements ItemService {
         }
 
         ItemDto itemDtoUpdate = itemMapper.toDto(itemRepository.save(itemOld));
-        /*itemDtoUpdate.setComments(commentListMapper
-                .toListDto(commentRepository.findAllByItemId(itemOld.getId())));*/
+        itemDtoUpdate.setComments(commentListMapper
+                .toListDto(commentRepository.findAllByItemId(itemOld.getId())));
 
         return itemDtoUpdate;
     }
@@ -99,6 +104,12 @@ public class ItemServiceImpl implements ItemService {
         } else if (item.getAvailable() == null) {
             log.error("Ошибка добавления предмета.");
             throw new ValidationException("Необходимо выбрать статус для предмета");
+        }
+    }
+
+    private void checkUser(Integer id) {
+        if (!userRepository.existsById(id)) {
+            throw new UserNotFoundException("Пользователь не найден.");
         }
     }
 }

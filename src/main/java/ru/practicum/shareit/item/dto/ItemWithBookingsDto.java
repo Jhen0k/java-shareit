@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import ru.practicum.shareit.booking.dto.BookingOwnerByItem;
 import ru.practicum.shareit.request.model.ItemRequest;
+import ru.practicum.shareit.user.model.User;
 
 import java.util.List;
 
@@ -16,7 +17,7 @@ public class ItemWithBookingsDto extends ItemDto {
     private BookingOwnerByItem nextBooking;
 
     public ItemWithBookingsDto(Integer id,
-                               Integer ownerId,
+                               User ownerId,
                                String name,
                                String description,
                                Boolean available,
