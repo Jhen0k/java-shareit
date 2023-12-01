@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.shareit.booking.dto.BookingRequestDto;
 import ru.practicum.shareit.booking.dto.BookingResponseDto;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/bookings")
@@ -35,6 +37,12 @@ public class BookingController {
     @GetMapping("/{bookingId}")
     public BookingResponseDto findBooking(@RequestHeader("X-Sharer-User-Id") int userId, @PathVariable int bookingId) {
         return bookingService.findBooking(userId, bookingId);
+    }
+
+    @GetMapping
+    public List<BookingResponseDto> findBookingsByUser(@RequestHeader("X-Sharer-User-Id") int userId,
+                                                       @RequestParam(value = "state", defaultValue = "ALL") String state) {
+        return bookingService.findBookingsByUser(userId, state);
     }
 
 }

@@ -92,7 +92,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<BookingResponseDto> findBookingsByUser(int userId, String state) {
-        Optional.of(userRepository.findById(userId)).get().orElseThrow();
+        checkUser(userId);
         List<Booking> booking = bookingRepository.findAllByBookerIdIs(userId);
 
         return sortedBookings(booking, state).stream()
