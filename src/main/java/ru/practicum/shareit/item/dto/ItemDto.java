@@ -11,7 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 public class ItemDto {
     private Integer id;
-    private User ownerId;
+    private User owner;
     private String name;
     private String description;
     private Boolean available;
