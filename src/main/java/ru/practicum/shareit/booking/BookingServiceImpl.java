@@ -12,8 +12,6 @@ import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.ItemService;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.mappers.BookingMapper;
-import ru.practicum.shareit.mappers.ItemMapper;
-import ru.practicum.shareit.mappers.UserMapper;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.model.User;
 
