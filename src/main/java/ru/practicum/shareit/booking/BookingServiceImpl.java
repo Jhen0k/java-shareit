@@ -5,12 +5,17 @@ import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.dto.BookingRequestDto;
 import ru.practicum.shareit.booking.dto.BookingResponseDto;
 import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.exception.ItemNotFoundException;
 import ru.practicum.shareit.exception.UserNotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.ItemService;
+import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.mappers.BookingMapper;
 import ru.practicum.shareit.user.UserRepository;
+import ru.practicum.shareit.user.dto.RentUserDto;
+import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -37,9 +42,11 @@ public class BookingServiceImpl implements BookingService {
 
 
     @Override
-    public BookingResponseDto createBooking(BookingRequestDto bookingRequestDto, Integer userId) {
+    public BookingResponseDto createBooking(BookingRequestDto bookingRequestDto, int userId) {
         checkValidateBooking(bookingRequestDto, userId);
-        Booking booking = bookingMapper.toEntity(bookingRequestDto);
+        User user = userRepository.findById(userId).get();
+        Item item = itemRepository.findById(bookingRequestDto.getItemId()).orElseThrow();
+        Booking booking = bookingMapper.toEntity(bookingRequestDto, user, item);
         return bookingMapper.toDtoFromResponse(bookingRepository.save(booking));
     }
 
@@ -150,9 +157,15 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public void checkValidateBooking(BookingRequestDto bookingDto, Integer userId) {
-        Optional.of(userRepository.findById(userId)).get().orElseThrow();
-        Optional.of(itemRepository.findById(bookingDto.getItemId())).get().orElseThrow();
+    public void checkValidateBooking(BookingRequestDto bookingDto, int userId) {
+        if (!userRepository.existsById(userId)) {
+            throw new UserNotFoundException("Пользователя с таким id не существует");
+        }
+
+        if (!itemRepository.existsById(bookingDto.getItemId())) {
+            throw new ItemNotFoundException("Предмета с указанным Id не существует");
+        }
+
         Integer ownerId = itemService.findItem(bookingDto.getItemId()).getOwner().getId();
 
         if (ownerId == userId) {

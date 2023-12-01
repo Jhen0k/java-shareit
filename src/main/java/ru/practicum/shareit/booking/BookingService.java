@@ -6,7 +6,7 @@ import ru.practicum.shareit.booking.dto.BookingResponseDto;
 import java.util.List;
 
 public interface BookingService {
-    BookingResponseDto createBooking(BookingRequestDto bookingRequestDto, Integer userId);
+    BookingResponseDto createBooking(BookingRequestDto bookingRequestDto, int userId);
 
     BookingResponseDto updateStatusBooking(Integer userId, Integer bookingId, Boolean approved);
 
@@ -18,5 +18,5 @@ public interface BookingService {
 
     List<BookingResponseDto> findAllBookingsByItemsOwner(Integer userId, String state);
 
-    void checkValidateBooking(BookingRequestDto bookingDto, Integer userId);
+    void checkValidateBooking(BookingRequestDto bookingDto, int userId);
 }

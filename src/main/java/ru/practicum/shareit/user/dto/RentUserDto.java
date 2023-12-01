@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class UserShort {
-    private Long id;
+public class RentUserDto {
+    private Integer id;
     private final String name;
 }

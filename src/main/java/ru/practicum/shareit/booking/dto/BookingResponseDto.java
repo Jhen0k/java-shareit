@@ -5,7 +5,7 @@ import lombok.Data;
 
 import ru.practicum.shareit.booking.StatusBooking;
 import ru.practicum.shareit.item.dto.ItemForBooking;
-import ru.practicum.shareit.user.dto.UserShort;
+import ru.practicum.shareit.user.dto.RentUserDto;
 
 @Data
 @AllArgsConstructor
@@ -16,7 +16,7 @@ public class BookingResponseDto {
 
     private String end;
 
-    private UserShort booker;
+    private RentUserDto booker;
 
     private ItemForBooking item;
 
