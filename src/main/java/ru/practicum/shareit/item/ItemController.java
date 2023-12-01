@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemWithBookingsDto;
 
@@ -42,7 +43,7 @@ public class ItemController {
     }
 
     @GetMapping
-    public List<ItemDto> findAllItemForOwner(@RequestHeader("X-Sharer-User-Id") int userId) {
+    public List<ItemWithBookingsDto> findAllItemForOwner(@RequestHeader("X-Sharer-User-Id") int userId) {
         return itemService.findAllItemForOwner(userId);
     }
 
@@ -52,5 +53,11 @@ public class ItemController {
             return new ArrayList<>();
         }
         return itemService.searchAvailableItem(text);
+    }
+
+    @PostMapping("/{itemId}/comment")
+    public CommentDto createComment(@RequestBody CommentDto commentDto, @RequestHeader("X-Sharer-User-Id") int userId,
+                                    @PathVariable int itemId) {
+        return itemService.createComment(commentDto, userId, itemId);
     }
 }

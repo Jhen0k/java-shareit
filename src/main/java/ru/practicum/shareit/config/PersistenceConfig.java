@@ -11,7 +11,7 @@ import javax.persistence.EntityManagerFactory;
 @Configuration
 @EnableTransactionManagement // включает управление транзакциями и обработку соответствующих аннотаций
 @EnableJpaRepositories(basePackages = "ru.practicum")
-public class PersistenceConfig{
+public class PersistenceConfig {
 
     @Bean
     public JpaTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {

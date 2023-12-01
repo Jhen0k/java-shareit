@@ -6,7 +6,7 @@ import ru.practicum.shareit.item.dto.ItemForBooking;
 import ru.practicum.shareit.item.dto.ItemWithBookingsDto;
 import ru.practicum.shareit.item.model.Item;
 
-@Mapper(componentModel = "spring", uses = {UserMapper.class, CommentListMapper.class})
+@Mapper(componentModel = "spring", uses = {UserMapper.class, CommentListMapper.class, BookingMapper.class})
 public interface ItemMapper {
 
     ItemDto toDto(Item item);
