@@ -123,7 +123,9 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemDto> findAllItemForOwner(int userId) {
-        Optional.of(userRepository.findById(userId)).get().orElseThrow();
+        if (!userRepository.existsById(userId)) {
+            throw new UserNotFoundException("Пользователя с таким id не существует");
+        }
         List<Item> items = itemRepository.findItemByOwnerId(userId);
 
         return items.stream()

@@ -51,12 +51,8 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public BookingResponseDto updateStatusBooking(Integer userId,
-                                                  Integer bookingId,
-                                                  Boolean approved) {
-        if (!userRepository.existsById(userId)) {
-            throw new UserNotFoundException("Пользователя с таким id не существует");
-        }
+    public BookingResponseDto updateStatusBooking(int userId, int bookingId, Boolean approved) {
+        checkUser(userId);
         checkExistBooking(bookingId);
         Booking booking = bookingRepository.findById(bookingId).orElseThrow();
 
@@ -82,16 +78,9 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public void checkExistBooking(Integer bookingId) {
-        if (!bookingRepository.existsById(bookingId)) {
-            throw new UserNotFoundException("Бронирования с таким id не существует");
-        }
-    }
-
-    @Override
-    public BookingResponseDto findBooking(Integer userId, Integer bookingId) {
+    public BookingResponseDto findBooking(int userId, int bookingId) {
         checkExistBooking(bookingId);
-        Optional.of(userRepository.findById(userId)).get().orElseThrow();
+        checkUser(userId);
         Booking booking = bookingRepository.findById(bookingId).orElseThrow();
 
         if (booking.getBooker().getId() == userId || booking.getItem().getOwner().getId() == userId) {
@@ -102,7 +91,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingResponseDto> findBookingsByUser(Integer userId, String state) {
+    public List<BookingResponseDto> findBookingsByUser(int userId, String state) {
         Optional.of(userRepository.findById(userId)).get().orElseThrow();
         List<Booking> booking = bookingRepository.findAllByBookerIdIs(userId);
 
@@ -111,7 +100,7 @@ public class BookingServiceImpl implements BookingService {
                 .collect(Collectors.toList());
     }
 
-    public List<BookingResponseDto> findAllBookingsByItemsOwner(Integer userId, String state) {
+    public List<BookingResponseDto> findAllBookingsByItemsOwner(int userId, String state) {
         Optional.of(userRepository.findById(userId)).get().orElseThrow();
         List<Booking> booking = bookingRepository.findAllBookingsByItemsOwner(userId);
 
@@ -160,14 +149,8 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public void checkValidateBooking(BookingRequestDto bookingDto, int userId) {
-        if (!userRepository.existsById(userId)) {
-            throw new UserNotFoundException("Пользователя с таким id не существует");
-        }
-
-        if (!itemRepository.existsById(bookingDto.getItemId())) {
-            throw new ItemNotFoundException("Предмета с указанным Id не существует");
-        }
-
+        checkUser(userId);
+        checkItem(bookingDto.getItemId());
         Integer ownerId = itemService.findItem(bookingDto.getItemId()).getOwner().getId();
 
         if (ownerId == userId) {
@@ -189,6 +172,25 @@ public class BookingServiceImpl implements BookingService {
             throw new ValidationException("Время начала использования не может быть позже или равен времени окончания");
         } else if (start.isBefore(LocalDateTime.now())) {
             throw new ValidationException("Начало использования не может быть в прошедшем времени");
+        }
+    }
+
+    @Override
+    public void checkExistBooking(int bookingId) {
+        if (!bookingRepository.existsById(bookingId)) {
+            throw new UserNotFoundException("Бронирования с таким id не существует");
+        }
+    }
+
+    private void checkUser(int userId) {
+        if (!userRepository.existsById(userId)) {
+            throw new UserNotFoundException("Пользователя с таким id не существует");
+        }
+    }
+
+    private void checkItem(int itemId) {
+        if (!itemRepository.existsById(itemId)) {
+            throw new ItemNotFoundException("Предмета с указанным Id не существует");
         }
     }
 }
