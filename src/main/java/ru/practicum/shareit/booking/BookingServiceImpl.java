@@ -54,7 +54,9 @@ public class BookingServiceImpl implements BookingService {
     public BookingResponseDto updateStatusBooking(Integer userId,
                                                   Integer bookingId,
                                                   Boolean approved) {
-        Optional.of(userRepository.findById(userId)).get().orElseThrow();
+        if (!userRepository.existsById(userId)) {
+            throw new UserNotFoundException("Пользователя с таким id не существует");
+        }
         checkExistBooking(bookingId);
         Booking booking = bookingRepository.findById(bookingId).orElseThrow();
 
