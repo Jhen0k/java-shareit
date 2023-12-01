@@ -15,8 +15,9 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.mappers.BookingMapper;
 import ru.practicum.shareit.mappers.CommentListMapper;
 import ru.practicum.shareit.mappers.ItemMapper;
+import ru.practicum.shareit.mappers.UserMapper;
 import ru.practicum.shareit.user.UserRepository;
-import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.dto.UserDto;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -31,6 +32,7 @@ public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
+    private final UserMapper userMapper;
     private final ItemMapper itemMapper;
     private final CommentListMapper commentListMapper;
     private final BookingRepository bookingRepository;
@@ -40,7 +42,7 @@ public class ItemServiceImpl implements ItemService {
     public ItemDto createItem(ItemDto itemDto, Integer userId) {
         checkValidateItem(itemDto);
         checkUser(userId);
-        User user = userRepository.findById(userId).orElseThrow();
+        UserDto user = userMapper.toDto(userRepository.findById(userId).orElseThrow());
         itemDto.setOwner(user);
         Item item = itemMapper.toEntity(itemDto);
 
@@ -51,7 +53,7 @@ public class ItemServiceImpl implements ItemService {
     public ItemDto updateItem(ItemDto itemDto, int userId, int itemId) {
         checkItemByUser(userId, itemId);
         checkUser(userId);
-        User user = userRepository.findById(userId).orElseThrow();
+        UserDto user = userMapper.toDto(userRepository.findById(userId).orElseThrow());
         itemDto.setOwner(user);
         Item itemUpdate = itemMapper.toEntity(itemDto);
         Item itemOld = Optional.of(itemRepository.findById(itemId)).get().orElseThrow();
@@ -79,8 +81,6 @@ public class ItemServiceImpl implements ItemService {
                 itemMapper.toItemWithBookingDto(itemRepository.findById(itemId).get());
         itemWithBookingsDto.setComments(commentListMapper
                 .toListDto(commentRepository.findAllByItemId(itemId)));
-
-        System.out.println(itemWithBookingsDto.toString());
 
         return itemWithBookingsDto;
     }
@@ -116,7 +116,6 @@ public class ItemServiceImpl implements ItemService {
         }
         itemWithBookingsDto.setComments(commentListMapper
                 .toListDto(commentRepository.findAllByItemId(itemId)));
-        System.out.println(itemWithBookingsDto.toString());
 
 
         return itemWithBookingsDto;
