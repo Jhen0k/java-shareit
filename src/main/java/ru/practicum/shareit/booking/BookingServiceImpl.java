@@ -12,8 +12,6 @@ import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.ItemService;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.mappers.BookingMapper;
-import ru.practicum.shareit.mappers.ItemMapper;
-import ru.practicum.shareit.mappers.UserMapper;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.model.User;
 
@@ -57,7 +55,8 @@ public class BookingServiceImpl implements BookingService {
 
         if (approved == null) {
             throw new ValidationException("Нужно указать необходимый статус для бронирования");
-        } else if (booking.getItem().getOwner().getId() != userId) {
+        }
+        if (booking.getItem().getOwner().getId() != userId) {
             throw new UserNotFoundException("Статус бронирования может менять только владелец вещи");
         }
 
@@ -113,37 +112,38 @@ public class BookingServiceImpl implements BookingService {
 
         switch (state) {
             case "ALL":
-                return bookings.stream()
-                        .sorted((b1, b2) -> b2.getStart().compareTo(b1.getStart()))
-                        .collect(Collectors.toList());
+                break;
             case "CURRENT":
-                return bookings.stream()
+                bookings = bookings.stream()
                         .filter(b -> now.isAfter(b.getStart()) && now.isBefore(b.getEnd()))
-                        .sorted((b1, b2) -> b2.getStart().compareTo(b1.getStart()))
                         .collect(Collectors.toList());
+                break;
             case "PAST":
-                return bookings.stream()
+                bookings = bookings.stream()
                         .filter(b -> now.isAfter(b.getEnd()))
-                        .sorted((b1, b2) -> b2.getStart().compareTo(b1.getStart()))
                         .collect(Collectors.toList());
+                break;
             case "FUTURE":
-                return bookings.stream()
+                bookings = bookings.stream()
                         .filter(b -> now.isBefore(b.getStart()))
-                        .sorted((b1, b2) -> b2.getStart().compareTo(b1.getStart()))
                         .collect(Collectors.toList());
+                break;
             case "WAITING":
-                return bookings.stream()
+                bookings = bookings.stream()
                         .filter(b -> b.getStatusBooking() == StatusBooking.WAITING)
-                        .sorted((b1, b2) -> b2.getStart().compareTo(b1.getStart()))
                         .collect(Collectors.toList());
+                break;
             case "REJECTED":
-                return bookings.stream()
+                bookings = bookings.stream()
                         .filter(b -> b.getStatusBooking() == StatusBooking.REJECTED)
-                        .sorted((b1, b2) -> b2.getStart().compareTo(b1.getStart()))
                         .collect(Collectors.toList());
+                break;
             default:
                 throw new ValidationException("Unknown state: " + state);
         }
+        return bookings.stream()
+                .sorted((b1, b2) -> b2.getStart().compareTo(b1.getStart()))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -169,7 +169,8 @@ public class BookingServiceImpl implements BookingService {
 
         if (start.isAfter(end) || start.equals(end)) {
             throw new ValidationException("Время начала использования не может быть позже или равен времени окончания");
-        } else if (start.isBefore(LocalDateTime.now())) {
+        }
+        if (start.isBefore(LocalDateTime.now())) {
             throw new ValidationException("Начало использования не может быть в прошедшем времени");
         }
     }

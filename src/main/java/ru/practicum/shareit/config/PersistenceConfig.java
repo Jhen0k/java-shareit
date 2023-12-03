@@ -9,7 +9,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import javax.persistence.EntityManagerFactory;
 
 @Configuration
-@EnableTransactionManagement // включает управление транзакциями и обработку соответствующих аннотаций
+// включает управление транзакциями и обработку соответствующих аннотаций
+@EnableTransactionManagement
 @EnableJpaRepositories(basePackages = "ru.practicum")
 public class PersistenceConfig {
 
