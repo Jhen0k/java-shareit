@@ -23,6 +23,7 @@ import java.util.List;
 @RequestMapping("/items")
 public class ItemController {
     private final ItemService itemService;
+    private final CommentService commentService;
 
     @PostMapping()
     public ItemDto createItem(@RequestBody ItemDto itemDto,
@@ -58,6 +59,6 @@ public class ItemController {
     @PostMapping("/{itemId}/comment")
     public CommentDto createComment(@RequestBody CommentDto commentDto, @RequestHeader("X-Sharer-User-Id") int userId,
                                     @PathVariable int itemId) {
-        return itemService.createComment(commentDto, userId, itemId);
+        return commentService.createComment(commentDto, userId, itemId);
     }
 }

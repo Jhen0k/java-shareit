@@ -5,18 +5,16 @@ import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.dto.BookingRequestDto;
 import ru.practicum.shareit.booking.dto.BookingResponseDto;
 import ru.practicum.shareit.booking.model.Booking;
-import ru.practicum.shareit.exception.ItemNotFoundException;
 import ru.practicum.shareit.exception.UserNotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.ItemRepository;
-import ru.practicum.shareit.item.ItemService;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.mappers.BookingMapper;
 import ru.practicum.shareit.user.UserRepository;
+import ru.practicum.shareit.user.UserValidation;
 import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,13 +23,13 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class BookingServiceImpl implements BookingService {
 
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+    private final BookingValidation bookingValidation;
+
+    private final UserValidation userValidation;
 
     private final BookingRepository bookingRepository;
 
     private final UserRepository userRepository;
-
-    private final ItemService itemService;
 
     private final ItemRepository itemRepository;
 
@@ -40,8 +38,8 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingResponseDto createBooking(BookingRequestDto bookingRequestDto, int userId) {
-        checkValidateBooking(bookingRequestDto, userId);
-        User user = userRepository.findById(userId).get();
+        bookingValidation.checkValidateBooking(bookingRequestDto, userId);
+        User user = userRepository.findById(userId).orElseThrow();
         Item item = itemRepository.findById(bookingRequestDto.getItemId()).orElseThrow();
         Booking booking = bookingMapper.toEntity(bookingRequestDto, user, item);
         return bookingMapper.toDtoFromResponse(bookingRepository.save(booking));
@@ -49,8 +47,8 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingResponseDto updateStatusBooking(int userId, int bookingId, Boolean approved) {
-        checkUser(userId);
-        checkExistBooking(bookingId);
+        userValidation.checkUser(userId);
+        bookingValidation.checkExistBooking(bookingId);
         Booking booking = bookingRepository.findById(bookingId).orElseThrow();
 
         if (approved == null) {
@@ -77,8 +75,8 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingResponseDto findBooking(int userId, int bookingId) {
-        checkExistBooking(bookingId);
-        checkUser(userId);
+        bookingValidation.checkExistBooking(bookingId);
+        userValidation.checkUser(userId);
         Booking booking = bookingRepository.findById(bookingId).orElseThrow();
 
         if (booking.getBooker().getId() == userId || booking.getItem().getOwner().getId() == userId) {
@@ -90,7 +88,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<BookingResponseDto> findBookingsByUser(int userId, String state) {
-        checkUser(userId);
+        userValidation.checkUser(userId);
         List<Booking> booking = bookingRepository.findAllByBookerIdIs(userId);
 
         return sortedBookings(booking, state).stream()
@@ -99,7 +97,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     public List<BookingResponseDto> findAllBookingsByItemsOwner(int userId, String state) {
-        checkUser(userId);
+        userValidation.checkUser(userId);
         List<Booking> booking = bookingRepository.findAllBookingsByItemsOwner(userId);
 
         return sortedBookings(booking, state).stream()
@@ -144,53 +142,5 @@ public class BookingServiceImpl implements BookingService {
         return bookings.stream()
                 .sorted((b1, b2) -> b2.getStart().compareTo(b1.getStart()))
                 .collect(Collectors.toList());
-    }
-
-    @Override
-    public void checkValidateBooking(BookingRequestDto bookingDto, int userId) {
-        checkUser(userId);
-        checkItem(bookingDto.getItemId());
-        Integer ownerId = itemService.findItem(bookingDto.getItemId()).getOwner().getId();
-
-        if (ownerId == userId) {
-            throw new UserNotFoundException("Владелец не может забронировать собственную вещь");
-        }
-
-        if (!itemRepository.existsItemByIdAndAvailableIsTrue(bookingDto.getItemId())) {
-            throw new ValidationException("Запрашиваемая вещь уже занята");
-        }
-
-        if (bookingDto.getStart() == null || bookingDto.getEnd() == null) {
-            throw new ValidationException("Не указан период аренды");
-        }
-
-        LocalDateTime start = LocalDateTime.parse(bookingDto.getStart(), formatter);
-        LocalDateTime end = LocalDateTime.parse(bookingDto.getEnd(), formatter);
-
-        if (start.isAfter(end) || start.equals(end)) {
-            throw new ValidationException("Время начала использования не может быть позже или равен времени окончания");
-        }
-        if (start.isBefore(LocalDateTime.now())) {
-            throw new ValidationException("Начало использования не может быть в прошедшем времени");
-        }
-    }
-
-    @Override
-    public void checkExistBooking(int bookingId) {
-        if (!bookingRepository.existsById(bookingId)) {
-            throw new UserNotFoundException("Бронирования с таким id не существует");
-        }
-    }
-
-    private void checkUser(int userId) {
-        if (!userRepository.existsById(userId)) {
-            throw new UserNotFoundException("Пользователя с таким id не существует");
-        }
-    }
-
-    private void checkItem(int itemId) {
-        if (!itemRepository.existsById(itemId)) {
-            throw new ItemNotFoundException("Предмета с указанным Id не существует");
-        }
     }
 }
