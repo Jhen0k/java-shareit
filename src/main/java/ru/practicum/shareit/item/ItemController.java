@@ -44,16 +44,20 @@ public class ItemController {
     }
 
     @GetMapping
-    public List<ItemWithBookingsDto> findAllItemForOwner(@RequestHeader("X-Sharer-User-Id") int userId) {
-        return itemService.findAllItemForOwner(userId);
+    public List<ItemWithBookingsDto> findAllItemForOwner(@RequestHeader("X-Sharer-User-Id") int userId,
+                                                         @RequestParam(defaultValue = "0") Integer from,
+                                                         @RequestParam(defaultValue = "10") Integer size) {
+        return itemService.findAllItemForOwner(userId, from, size);
     }
 
     @GetMapping("/search")
-    public List<ItemDto> searchAvailableItem(@RequestParam String text) {
+    public List<ItemDto> searchAvailableItem(@RequestParam String text,
+                                             @RequestParam(defaultValue = "0") Integer from,
+                                             @RequestParam(defaultValue = "10") Integer size) {
         if (text == null || text.isBlank()) {
             return new ArrayList<>();
         }
-        return itemService.searchAvailableItem(text);
+        return itemService.searchAvailableItem(text, from, size);
     }
 
     @PostMapping("/{itemId}/comment")

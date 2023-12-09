@@ -1,7 +1,10 @@
 package ru.practicum.shareit.booking;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingRequestDto;
 import ru.practicum.shareit.booking.dto.BookingResponseDto;
 import ru.practicum.shareit.booking.model.Booking;
@@ -10,6 +13,7 @@ import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.mappers.BookingMapper;
+import ru.practicum.shareit.paginator.Paginator;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.UserValidation;
 import ru.practicum.shareit.user.model.User;
@@ -18,7 +22,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class BookingServiceImpl implements BookingService {
@@ -36,6 +40,7 @@ public class BookingServiceImpl implements BookingService {
     private final BookingMapper bookingMapper;
 
 
+    @Transactional
     @Override
     public BookingResponseDto createBooking(BookingRequestDto bookingRequestDto, int userId) {
         bookingValidation.checkValidateBooking(bookingRequestDto, userId);
@@ -45,6 +50,7 @@ public class BookingServiceImpl implements BookingService {
         return bookingMapper.toDtoFromResponse(bookingRepository.save(booking));
     }
 
+    @Transactional
     @Override
     public BookingResponseDto updateStatusBooking(int userId, int bookingId, Boolean approved) {
         userValidation.checkUser(userId);
@@ -73,6 +79,7 @@ public class BookingServiceImpl implements BookingService {
         return bookingMapper.toDtoFromResponse(bookingRepository.save(booking));
     }
 
+    @Transactional
     @Override
     public BookingResponseDto findBooking(int userId, int bookingId) {
         bookingValidation.checkExistBooking(bookingId);
@@ -86,21 +93,26 @@ public class BookingServiceImpl implements BookingService {
         }
     }
 
+    @Transactional
     @Override
-    public List<BookingResponseDto> findBookingsByUser(int userId, String state) {
+    public List<BookingResponseDto> findBookingsByUser(int userId, String state, Integer from, Integer size) {
+        Pageable pageable = Paginator.getPageable(from, size, "end");
         userValidation.checkUser(userId);
-        List<Booking> booking = bookingRepository.findAllByBookerIdIs(userId);
+        List<Booking> booking = bookingRepository.findAllByBookerIdIs(userId, pageable);
 
-        return sortedBookings(booking, state).stream()
+        return sortedBookings(booking, state.toUpperCase()).stream()
                 .map(bookingMapper::toDtoFromResponse)
                 .collect(Collectors.toList());
     }
 
-    public List<BookingResponseDto> findAllBookingsByItemsOwner(int userId, String state) {
+    @Transactional
+    @Override
+    public List<BookingResponseDto> findAllBookingsByItemsOwner(int userId, String state, Integer from, Integer size) {
+        Pageable pageable = Paginator.getPageable(from, size, "end");
         userValidation.checkUser(userId);
-        List<Booking> booking = bookingRepository.findAllBookingsByItemsOwner(userId);
+        List<Booking> booking = bookingRepository.findAllBookingsByItemsOwner(userId, pageable);
 
-        return sortedBookings(booking, state).stream()
+        return sortedBookings(booking, state.toUpperCase()).stream()
                 .map(bookingMapper::toDtoFromResponse)
                 .collect(Collectors.toList());
     }

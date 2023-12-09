@@ -12,6 +12,13 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse notFoundExceptionException(final NotFoundException e) {
+        log.warn("NotFoundException exception: ", e);
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleItemNotFoundException(final ItemNotFoundException e) {
         log.warn("Conflict exception:", e);
         return new ErrorResponse(e.getMessage());
