@@ -9,7 +9,6 @@ import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -34,7 +33,7 @@ public class UserServiceImpl implements UserService {
         userValidation.checkUser(id);
         userDto.setId(id);
         User updatedUser = userMapper.toEntity(userDto);
-        User oldUser = Optional.of(repository.findById(id)).get().orElseThrow();
+        User oldUser = repository.findById(id).orElseThrow();
 
         if (updatedUser.getName() != null) {
             oldUser.setName(updatedUser.getName());

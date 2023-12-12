@@ -17,9 +17,8 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
@@ -38,6 +37,8 @@ public class UserControllerTest {
     UserDto userDto;
 
     List<UserDto> usersDto;
+
+    int userId = 1;
 
     @BeforeEach
     void setUp() {
@@ -67,6 +68,23 @@ public class UserControllerTest {
     }
 
     @Test
+    void updateUser() throws Exception {
+        UserDto updateUser = new UserDto(1, "update@mail.ru", "updateName");
+
+        when(userService.updateUser(userId, userDto)).thenReturn(updateUser);
+
+        mvc.perform(patch("/users/1")
+                        .content(mapper.writeValueAsString(userDto))
+                        .param("userId", "1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding(StandardCharsets.UTF_8))
+                .andExpect(status().isOk())
+                .andExpect(content().json(mapper.writeValueAsString(updateUser)));
+
+        verify(userService, times(1)).updateUser(userId, userDto);
+    }
+
+    @Test
     void getAllUsers() throws Exception {
         usersDto.add(userDto);
         usersDto.add(userDto);
@@ -76,6 +94,25 @@ public class UserControllerTest {
         mvc.perform(get("/users"))
                 .andExpect(status().isOk())
                 .andExpect(content().json(mapper.writeValueAsString(Arrays.asList(userDto, userDto))));
+    }
+
+    @Test
+    void getUserById() throws Exception {
+
+        mvc.perform(get("/users/{userId}", userId))
+                .andExpect(status().isOk());
+
+        verify(userService).findUser(userId);
+    }
+
+    @Test
+    void deleteUser() throws Exception {
+
+        mvc.perform(delete("/users/1")
+                        .param("userId", "1"))
+                .andExpect(status().isOk());
+
+        verify(userService, times(1)).deleteUser(userId);
     }
 }
 
