@@ -46,8 +46,6 @@ public class CommentListMapperTest {
     void toListEntity() {
         int id = 1;
         String text = "text";
-        User author = User.builder().id(1).name("name").email("mail@mail.ru").build();
-        Item item = new Item(1, author, "name", "description", true);
         CommentDto commentDto = new CommentDto(id, text, "name", LocalDateTime.now());
         List<CommentDto> commentsDto = List.of(commentDto);
 

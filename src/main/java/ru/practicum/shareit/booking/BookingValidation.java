@@ -32,14 +32,17 @@ public class BookingValidation {
         Integer ownerId = itemService.findItem(bookingDto.getItemId()).getOwner().getId();
 
         if (ownerId == userId) {
+            log.error("Владелец не может забронировать собственную вещь");
             throw new UserNotFoundException("Владелец не может забронировать собственную вещь");
         }
 
         if (!itemRepository.existsItemByIdAndAvailableIsTrue(bookingDto.getItemId())) {
+            log.error("Запрашиваемая вещь уже занята");
             throw new ValidationException("Запрашиваемая вещь уже занята");
         }
 
         if (bookingDto.getStart() == null || bookingDto.getEnd() == null) {
+            log.error("Не указан период аренды");
             throw new ValidationException("Не указан период аренды");
         }
 
@@ -47,15 +50,18 @@ public class BookingValidation {
         LocalDateTime end = LocalDateTime.parse(bookingDto.getEnd(), formatter);
 
         if (start.isAfter(end) || start.equals(end)) {
+            log.error("Время начала использования не может быть позже или равен времени окончания");
             throw new ValidationException("Время начала использования не может быть позже или равен времени окончания");
         }
         if (start.isBefore(LocalDateTime.now())) {
+            log.error("Начало использования не может быть в прошедшем времени");
             throw new ValidationException("Начало использования не может быть в прошедшем времени");
         }
     }
 
     public void checkExistBooking(int bookingId) {
         if (!bookingRepository.existsById(bookingId)) {
+            log.error("Бронирования с таким id не существует");
             throw new UserNotFoundException("Бронирования с таким id не существует");
         }
     }
