@@ -1,49 +1,51 @@
 package ru.practicum.shareit.mappers;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.json.JsonTest;
-import org.springframework.boot.test.json.JacksonTester;
-import org.springframework.boot.test.json.JsonContent;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.junit.jupiter.MockitoExtension;
+import ru.practicum.shareit.user.dto.RentUserDto;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 
-import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@JsonTest
+@ExtendWith(MockitoExtension.class)
 public class UserMapperTest {
 
-    @Autowired
-    private JacksonTester<UserDto> jsonDto;
-    @Autowired
-    private JacksonTester<User> jsonUser;
+    @InjectMocks
+    UserMapperImpl userMapper;
 
-    User user;
-    UserDto userDto;
+    @Test
+    void toDto() {
+        User user = User.builder().id(1).name("name").email("mail@mail.ru").build();
 
-    @BeforeEach
-    void setUp() {
-        user = new User(1, "mail@mail.com", "jon");
-        userDto = new UserDto(1, "mail@mail.com", "jon");
+        UserDto userDto = userMapper.toDto(user);
+
+        assertEquals(userDto.getId(), user.getId());
+        assertEquals(userDto.getName(), user.getName());
+        assertEquals(userDto.getEmail(), user.getEmail());
     }
 
     @Test
-    void testUserDto() throws Exception{
-        JsonContent<UserDto> result = jsonDto.write(userDto);
+    void toEntity() {
+        UserDto userDto = UserDto.builder().id(1).name("name").email("mail@mail.ru").build();
 
-        assertThat(result).extractingJsonPathNumberValue("$.id").isEqualTo(1);
-        assertThat(result).extractingJsonPathStringValue("$.email").isEqualTo("mail@mail.com");
-        assertThat(result).extractingJsonPathStringValue("$.name").isEqualTo("jon");
+        User user = userMapper.toEntity(userDto);
+
+        assertEquals(user.getId(), userDto.getId());
+        assertEquals(user.getName(), userDto.getName());
+        assertEquals(user.getEmail(), userDto.getEmail());
     }
 
     @Test
-    void testUser() throws Exception {
-        JsonContent<User> result = jsonUser.write(user);
+    void toRentUserDto() {
+        User user = User.builder().id(1).name("name").email("mail@mail.ru").build();
 
-        assertThat(result).extractingJsonPathNumberValue("$.id").isEqualTo(1);
-        assertThat(result).extractingJsonPathStringValue("$.email").isEqualTo("mail@mail.com");
-        assertThat(result).extractingJsonPathStringValue("$.name").isEqualTo("jon");
+        RentUserDto rentUserDto = userMapper.toRentUserDto(user);
+
+        assertEquals(rentUserDto.getId(), user.getId());
+        assertEquals(rentUserDto.getName(), user.getName());
     }
 }
 

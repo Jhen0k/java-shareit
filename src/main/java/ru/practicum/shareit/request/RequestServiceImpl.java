@@ -12,7 +12,6 @@ import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestForResponseDto;
 import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.UserRepository;
-import ru.practicum.shareit.user.UserService;
 import ru.practicum.shareit.user.UserValidation;
 
 import javax.transaction.Transactional;
@@ -25,7 +24,6 @@ public class RequestServiceImpl implements RequestService {
     private final RequestValidation requestValidation;
     private final UserValidation userValidation;
     private final UserRepository userRepository;
-    private final UserService userService;
     private final ItemRequestMapper itemRequestMapper;
     private final RequestRepository requestRepository;
     private final ItemService itemService;
@@ -92,7 +90,7 @@ public class RequestServiceImpl implements RequestService {
         responseDto.setItems(itemService.findItemForRequest(requestId));
     }
 
-    public void addItemResponse(List<ItemRequestForResponseDto> responsesDtoList) {
+    private void addItemResponse(List<ItemRequestForResponseDto> responsesDtoList) {
         responsesDtoList.forEach(itemRequestDtForResponseDto -> {
             int requestId = itemRequestDtForResponseDto.getId();
             itemRequestDtForResponseDto.setItems(itemService.findItemForRequest(requestId));
