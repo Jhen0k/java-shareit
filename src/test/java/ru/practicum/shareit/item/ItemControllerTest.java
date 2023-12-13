@@ -127,6 +127,12 @@ public class ItemControllerTest {
                 .andExpect(content().json(objectMapper.writeValueAsString(itemsResponseDto)));
 
         verify(itemService, times(1)).searchAvailableItem(text, from, size);
+
+        mvc.perform(get("/items/search")
+                        .param("text", "")
+                        .param("from", "1")
+                        .param("size", "10"))
+                .andExpect(content().json(objectMapper.writeValueAsString(new ArrayList<>())));
     }
 
     @Test

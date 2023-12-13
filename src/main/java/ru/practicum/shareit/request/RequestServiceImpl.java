@@ -45,9 +45,7 @@ public class RequestServiceImpl implements RequestService {
         userValidation.checkUser(userId);
 
         List<ItemRequest> requests = requestRepository.findAllByRequestor_IdIs(userId);
-        List<ItemRequestForResponseDto> requestForResponse = requests.stream()
-                .map(itemRequestMapper::toResponseDto)
-                .collect(Collectors.toList());
+        List<ItemRequestForResponseDto> requestForResponse = requests.stream().map(itemRequestMapper::toResponseDto).collect(Collectors.toList());
         addItemResponse(requestForResponse);
 
         return requestForResponse;
@@ -60,9 +58,7 @@ public class RequestServiceImpl implements RequestService {
         userValidation.checkUser(userId);
 
         Page<ItemRequest> itemRequests = requestRepository.findAllNonOwnerBySort(userId, pageable);
-        List<ItemRequestForResponseDto> requestsDto = itemRequests.stream()
-                .map(itemRequestMapper::toResponseDto)
-                .collect(Collectors.toList());
+        List<ItemRequestForResponseDto> requestsDto = itemRequests.stream().map(itemRequestMapper::toResponseDto).collect(Collectors.toList());
         addItemResponse(requestsDto);
 
         return requestsDto;

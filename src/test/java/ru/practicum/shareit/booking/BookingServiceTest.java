@@ -9,6 +9,8 @@ import org.springframework.data.domain.Pageable;
 import ru.practicum.shareit.booking.dto.BookingRequestDto;
 import ru.practicum.shareit.booking.dto.BookingResponseDto;
 import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.exception.UserNotFoundException;
+import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.dto.ItemForBooking;
 import ru.practicum.shareit.item.model.Item;
@@ -24,6 +26,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
@@ -48,7 +51,7 @@ public class BookingServiceTest {
     private final String start = "2023-12-13T20:12:10";
     private final String end = "2023-12-13T20:12:10";
     private final LocalDateTime startLocalDateTime = LocalDateTime.of(2023, 12, 13, 20, 12, 10);
-    private final LocalDateTime endLocalDataTime = LocalDateTime.of(2023, 12, 13, 21, 12, 10);
+    private final LocalDateTime endLocalDataTime = LocalDateTime.of(2024, 12, 13, 21, 12, 10);
 
     @Test
     void createBooking() {
@@ -95,6 +98,18 @@ public class BookingServiceTest {
         BookingResponseDto responseDto = bookingService.updateStatusBooking(userId, bookingId, isApproved);
 
         assertEquals(bookingResponseDto.getStatus(), responseDto.getStatus());
+
+        assertThrows(ValidationException.class, () -> bookingService.updateStatusBooking(userId, bookingId, null));
+        user.setId(1);
+        assertThrows(UserNotFoundException.class, () -> bookingService.updateStatusBooking(userId, bookingId, isApproved));
+        user.setId(2);
+        booking.setStatusBooking(StatusBooking.APPROVED);
+        assertThrows(ValidationException.class, () -> bookingService.updateStatusBooking(userId, bookingId, isApproved));
+        bookingService.updateStatusBooking(userId, bookingId, false);
+        booking.setStatusBooking(StatusBooking.REJECTED);
+        assertThrows(ValidationException.class, () -> bookingService.updateStatusBooking(userId, bookingId, false));
+
+
     }
 
     @Test
@@ -115,6 +130,78 @@ public class BookingServiceTest {
         BookingResponseDto bookingResponseDto1 = bookingService.findBooking(userId, bookingId);
 
         assertEquals(bookingResponseDto, bookingResponseDto1);
+
+        assertThrows(UserNotFoundException.class, () -> bookingService.findBooking(1, bookingId));
+    }
+
+    @Test
+    void findBookingsByUser() {
+        int userId = 1;
+        int bookingId = 2;
+        String state = "ALL";
+        Integer from = 0;
+        Integer size = 10;
+        Pageable pageable = Paginator.getPageable(from, size, "end");
+        User user = User.builder().id(userId).name("name").email("mail@mail.ru").build();
+        Item item = new Item(1, user, "name", "description", true);
+        Booking booking1 = new Booking(bookingId, startLocalDateTime, endLocalDataTime, user, item, StatusBooking.WAITING);
+        Booking booking2 = new Booking(bookingId, startLocalDateTime.plusHours(2), endLocalDataTime.plusHours(2), user, item, StatusBooking.WAITING);
+        List<Booking> bookings = List.of(booking1, booking2);
+
+        doNothing().when(userValidation).checkUser(userId);
+        when(bookingRepository.findAllByBookerIdIs(userId, pageable)).thenReturn(bookings);
+
+        List<BookingResponseDto> responseDto = bookingService.findBookingsByUser(userId, state, from, size);
+
+        assertEquals(bookings.size(), responseDto.size());
+    }
+
+    @Test
+    void findBookingsByUser_whenStateCurrent() {
+        int userId = 1;
+        int bookingId = 2;
+        String state = "CURRENT";
+        Integer from = 0;
+        Integer size = 10;
+        LocalDateTime start = LocalDateTime.of(2000, 10, 12, 22, 22, 22);
+        Pageable pageable = Paginator.getPageable(from, size, "end");
+        User user = User.builder().id(userId).name("name").email("mail@mail.ru").build();
+        Item item = new Item(1, user, "name", "description", true);
+        Booking booking1 = new Booking(bookingId, start, endLocalDataTime, user, item, StatusBooking.WAITING);
+        Booking booking2 = new Booking(bookingId, startLocalDateTime.plusHours(2), endLocalDataTime.plusHours(2), user, item, StatusBooking.WAITING);
+        List<Booking> bookings = List.of(booking1, booking2);
+
+        doNothing().when(userValidation).checkUser(userId);
+        when(bookingRepository.findAllByBookerIdIs(userId, pageable)).thenReturn(bookings);
+
+        List<BookingResponseDto> responseDto = bookingService.findBookingsByUser(userId, state, from, size);
+
+        assertEquals(2, responseDto.size());
+
+        state = "PAST";
+        booking1.setEnd(LocalDateTime.now().minusHours(4));
+        responseDto = bookingService.findBookingsByUser(userId, state, from, size);
+
+        assertEquals(1, responseDto.size());
+
+        state = "FUTURE";
+        booking1.setStart(LocalDateTime.now().plusHours(4));
+        responseDto = bookingService.findBookingsByUser(userId, state, from, size);
+
+        assertEquals(1, responseDto.size());
+
+        state = "WAITING";
+        responseDto = bookingService.findBookingsByUser(userId, state, from, size);
+
+        assertEquals(2, responseDto.size());
+
+        state = "REJECTED";
+        booking1.setStatusBooking(StatusBooking.REJECTED);
+        responseDto = bookingService.findBookingsByUser(userId, state, from, size);
+
+        assertEquals(1, responseDto.size());
+
+        assertThrows(ValidationException.class, () -> bookingService.findBookingsByUser(userId, "NOT", from, size));
     }
 
     @Test
@@ -132,9 +219,9 @@ public class BookingServiceTest {
         List<Booking> bookings = List.of(booking1, booking2);
 
         doNothing().when(userValidation).checkUser(userId);
-        when(bookingRepository.findAllByBookerIdIs(userId, pageable)).thenReturn(bookings);
+        when(bookingRepository.findAllBookingsByItemsOwner(userId, pageable)).thenReturn(bookings);
 
-        List<BookingResponseDto> responseDto = bookingService.findBookingsByUser(userId, state, from, size);
+        List<BookingResponseDto> responseDto = bookingService.findAllBookingsByItemsOwner(userId, state, from, size);
 
         assertEquals(bookings.size(), responseDto.size());
     }

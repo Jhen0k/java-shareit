@@ -31,6 +31,8 @@ public class ItemValidationTest {
         Optional<Item> itemOptional = Optional.empty();
 
         assertThrows(ItemNotFoundException.class, () -> itemValidation.checkItem(itemOptional));
+        itemValidation.checkItem(Optional.of(new Item()));
+
     }
 
     @Test

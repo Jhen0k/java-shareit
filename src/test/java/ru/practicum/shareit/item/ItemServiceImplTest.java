@@ -10,7 +10,9 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import ru.practicum.shareit.booking.BookingRepository;
+import ru.practicum.shareit.booking.StatusBooking;
 import ru.practicum.shareit.booking.dto.BookingOwnerByItem;
+import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemForRequest;
 import ru.practicum.shareit.item.dto.ItemWithBookingsDto;
@@ -26,6 +28,7 @@ import ru.practicum.shareit.user.UserValidation;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -191,8 +194,10 @@ public class ItemServiceImplTest {
     void findItemWithTwoParam() {
         int userId = 1;
         int itemId = 1;
+        int bookingId = 1;
         User user = User.builder().id(userId).name("name").email("mail@mail.ru").build();
         Item item = new Item(1, user, "name", "description", true);
+        Booking booking1 = new Booking(bookingId, LocalDateTime.now(), LocalDateTime.now().plusHours(4), user, item, StatusBooking.WAITING);
         BookingOwnerByItem bookingOwnerByItem = new BookingOwnerByItem(1, "2023-12-13T18:00:00", "2023-12-13T18:00:00", 1);
         ItemWithBookingsDto itemWithBookingsDto = new ItemWithBookingsDto(1, new UserDto(), "name",
                 "description", true, new ItemRequest(), new ArrayList<>(), bookingOwnerByItem, bookingOwnerByItem);
@@ -200,9 +205,11 @@ public class ItemServiceImplTest {
         when(itemRepository.findById(itemId)).thenReturn(Optional.of(item));
         when(itemValidation.checkItem(Optional.of(item))).thenReturn(Optional.of(item));
         when(itemMapper.toItemWithBookingDto(item)).thenReturn(itemWithBookingsDto);
-        when(bookingRepository.findBookingsByItem(item)).thenReturn(new ArrayList<>());
+        //when(bookingRepository.findBookingsByItem(item)).thenReturn(new ArrayList<>());
         when(commentRepository.findAllByItemId(itemId)).thenReturn(new ArrayList<>());
         when(commentListMapper.toListDto(new ArrayList<>())).thenReturn(new ArrayList<>());
+        when(bookingRepository.findBookingsByItem(item)).thenReturn(List.of(booking1, booking1));
+        when(bookingMapper.toBookingOwnerByItem(booking1)).thenReturn(bookingOwnerByItem);
 
         ItemWithBookingsDto responseItemWithBookingDto = itemService.findItem(itemId, userId);
 
