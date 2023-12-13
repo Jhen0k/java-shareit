@@ -146,7 +146,8 @@ public class ItemServiceImpl implements ItemService {
                         reqId = item.getItemRequest().getId();
                     }
                 itemForRequest.setRequestId(reqId);
-                return itemForRequest;})
+                return itemForRequest;
+                })
                 .collect(Collectors.toList());
     }
 
