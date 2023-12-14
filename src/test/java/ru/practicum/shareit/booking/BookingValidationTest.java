@@ -7,7 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.practicum.shareit.booking.dto.BookingOwnerByItem;
 import ru.practicum.shareit.booking.dto.BookingRequestDto;
-import ru.practicum.shareit.exception.UserNotFoundException;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.ItemService;
@@ -61,7 +61,7 @@ public class BookingValidationTest {
         when(itemValidation.checkItem(Optional.of(item))).thenReturn(Optional.of(item));
         when(itemService.findItem(userId)).thenReturn(itemWithBookingsDto);
 
-        assertThrows(UserNotFoundException.class, () -> bookingValidation.checkValidateBooking(bookingRequestDto, userId));
+        assertThrows(NotFoundException.class, () -> bookingValidation.checkValidateBooking(bookingRequestDto, userId));
 
         userDto.setId(2);
         when(itemRepository.existsItemByIdAndAvailableIsTrue(itemId)).thenReturn(false);
@@ -91,6 +91,6 @@ public class BookingValidationTest {
 
         when(bookingRepository.existsById(bookingId)).thenReturn(false);
 
-        assertThrows(UserNotFoundException.class, () -> bookingValidation.checkExistBooking(bookingId));
+        assertThrows(NotFoundException.class, () -> bookingValidation.checkExistBooking(bookingId));
     }
 }

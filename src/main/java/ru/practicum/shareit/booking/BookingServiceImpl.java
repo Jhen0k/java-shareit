@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingRequestDto;
 import ru.practicum.shareit.booking.dto.BookingResponseDto;
 import ru.practicum.shareit.booking.model.Booking;
-import ru.practicum.shareit.exception.UserNotFoundException;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.model.Item;
@@ -63,7 +63,7 @@ public class BookingServiceImpl implements BookingService {
         }
         if (booking.getItem().getOwner().getId() != userId) {
             log.error("Статус бронирования может менять только владелец вещи");
-            throw new UserNotFoundException("Статус бронирования может менять только владелец вещи");
+            throw new NotFoundException("Статус бронирования может менять только владелец вещи");
         }
 
         if (approved) {
@@ -94,7 +94,7 @@ public class BookingServiceImpl implements BookingService {
             return bookingMapper.toDtoFromResponse(booking);
         } else {
             log.error("У вас нет бронирований с запрашиваемым предметом");
-            throw new UserNotFoundException("У вас нет бронирований с запрашиваемым предметом");
+            throw new NotFoundException("У вас нет бронирований с запрашиваемым предметом");
         }
     }
 

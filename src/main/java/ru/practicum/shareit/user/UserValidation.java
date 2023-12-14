@@ -3,7 +3,7 @@ package ru.practicum.shareit.user;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.exception.UserNotFoundException;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.user.model.User;
 
@@ -25,7 +25,7 @@ public class UserValidation {
 
     public void checkUser(Integer id) {
         if (!userRepository.existsById(id)) {
-            throw new UserNotFoundException("Пользователь не найден.");
+            throw new NotFoundException("Пользователь не найден.");
         }
     }
 }

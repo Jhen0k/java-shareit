@@ -25,10 +25,4 @@ public class ItemDto {
         this.description = description;
         this.available = available;
     }
-
-    public ItemDto(String name, String description, Boolean available) {
-        this.name = name;
-        this.description = description;
-        this.available = available;
-    }
 }

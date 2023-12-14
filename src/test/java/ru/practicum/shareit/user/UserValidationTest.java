@@ -5,7 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ru.practicum.shareit.exception.UserNotFoundException;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.user.model.User;
 
@@ -42,6 +42,6 @@ public class UserValidationTest {
 
         when(userRepository.existsById(userId)).thenReturn(false);
 
-        assertThrows(UserNotFoundException.class, () -> userValidation.checkUser(userId));
+        assertThrows(NotFoundException.class, () -> userValidation.checkUser(userId));
     }
 }

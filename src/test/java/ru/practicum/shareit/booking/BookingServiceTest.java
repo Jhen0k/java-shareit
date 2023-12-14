@@ -9,7 +9,7 @@ import org.springframework.data.domain.Pageable;
 import ru.practicum.shareit.booking.dto.BookingRequestDto;
 import ru.practicum.shareit.booking.dto.BookingResponseDto;
 import ru.practicum.shareit.booking.model.Booking;
-import ru.practicum.shareit.exception.UserNotFoundException;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.dto.ItemForBooking;
@@ -101,7 +101,7 @@ public class BookingServiceTest {
 
         assertThrows(ValidationException.class, () -> bookingService.updateStatusBooking(userId, bookingId, null));
         user.setId(1);
-        assertThrows(UserNotFoundException.class, () -> bookingService.updateStatusBooking(userId, bookingId, isApproved));
+        assertThrows(NotFoundException.class, () -> bookingService.updateStatusBooking(userId, bookingId, isApproved));
         user.setId(2);
         booking.setStatusBooking(StatusBooking.APPROVED);
         assertThrows(ValidationException.class, () -> bookingService.updateStatusBooking(userId, bookingId, isApproved));
@@ -131,7 +131,7 @@ public class BookingServiceTest {
 
         assertEquals(bookingResponseDto, bookingResponseDto1);
 
-        assertThrows(UserNotFoundException.class, () -> bookingService.findBooking(1, bookingId));
+        assertThrows(NotFoundException.class, () -> bookingService.findBooking(1, bookingId));
     }
 
     @Test

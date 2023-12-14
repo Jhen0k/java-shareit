@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.dto.BookingRequestDto;
-import ru.practicum.shareit.exception.UserNotFoundException;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.ItemService;
@@ -33,7 +33,7 @@ public class BookingValidation {
 
         if (ownerId == userId) {
             log.error("Владелец не может забронировать собственную вещь");
-            throw new UserNotFoundException("Владелец не может забронировать собственную вещь");
+            throw new NotFoundException("Владелец не может забронировать собственную вещь");
         }
 
         if (!itemRepository.existsItemByIdAndAvailableIsTrue(bookingDto.getItemId())) {
@@ -62,7 +62,7 @@ public class BookingValidation {
     public void checkExistBooking(int bookingId) {
         if (!bookingRepository.existsById(bookingId)) {
             log.error("Бронирования с таким id не существует");
-            throw new UserNotFoundException("Бронирования с таким id не существует");
+            throw new NotFoundException("Бронирования с таким id не существует");
         }
     }
 }

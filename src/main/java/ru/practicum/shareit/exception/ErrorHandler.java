@@ -30,11 +30,4 @@ public class ErrorHandler {
         log.warn("Validation exception: ", e);
         return new ErrorResponse(e.getMessage());
     }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleUserNotFoundException(final UserNotFoundException e) {
-        log.warn("User not found exception: ", e);
-        return new ErrorResponse(e.getMessage());
-    }
 }
