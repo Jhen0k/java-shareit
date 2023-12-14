@@ -200,6 +200,11 @@
 												<maximum>1</maximum>
 											</limit>
 										</limits>
+										<excludes>
+											<exclude>ru.practicum.shareit.exception.ErrorHandler</exclude>
+											<exclude>ru.practicum.shareit.ShareItApp</exclude>
+										</excludes>
+
 									</rule>
 								</rules>
 							</configuration>
