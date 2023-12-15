@@ -3,6 +3,7 @@ package ru.practicum.shareit.booking;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingRequestDto;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
@@ -26,6 +27,7 @@ public class BookingValidation {
     private final ItemRepository itemRepository;
     private final ItemService itemService;
 
+    @Transactional
     public void checkValidateBooking(BookingRequestDto bookingDto, int userId) {
         userValidation.checkUser(userId);
         itemValidation.checkItem(itemRepository.findById(bookingDto.getItemId()));

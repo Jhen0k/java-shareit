@@ -3,6 +3,7 @@ package ru.practicum.shareit.item;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.dto.ItemDto;
@@ -25,6 +26,7 @@ public class ItemValidation {
         return itemOptional;
     }
 
+    @Transactional
     public void checkItemByUser(int userId, int itemId) {
         userValidation.checkUser(userId);
         if (!itemRepository.existsItemByIdAndOwnerId(itemId, userId)) {

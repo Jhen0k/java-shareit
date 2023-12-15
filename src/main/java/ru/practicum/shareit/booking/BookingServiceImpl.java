@@ -40,8 +40,8 @@ public class BookingServiceImpl implements BookingService {
     private final BookingMapper bookingMapper;
 
 
-    @Transactional
     @Override
+    @Transactional
     public BookingResponseDto createBooking(BookingRequestDto bookingRequestDto, int userId) {
         bookingValidation.checkValidateBooking(bookingRequestDto, userId);
         User user = userRepository.findById(userId).orElseThrow();
@@ -50,8 +50,8 @@ public class BookingServiceImpl implements BookingService {
         return bookingMapper.toDtoFromResponse(bookingRepository.save(booking));
     }
 
-    @Transactional
     @Override
+    @Transactional
     public BookingResponseDto updateStatusBooking(int userId, int bookingId, Boolean approved) {
         userValidation.checkUser(userId);
         bookingValidation.checkExistBooking(bookingId);
@@ -83,8 +83,8 @@ public class BookingServiceImpl implements BookingService {
         return bookingMapper.toDtoFromResponse(bookingRepository.save(booking));
     }
 
-    @Transactional
     @Override
+    @Transactional
     public BookingResponseDto findBooking(int userId, int bookingId) {
         bookingValidation.checkExistBooking(bookingId);
         userValidation.checkUser(userId);
@@ -98,8 +98,8 @@ public class BookingServiceImpl implements BookingService {
         }
     }
 
-    @Transactional
     @Override
+    @Transactional
     public List<BookingResponseDto> findBookingsByUser(int userId, String state, Integer from, Integer size) {
         Pageable pageable = Paginator.getPageable(from, size, "end");
         userValidation.checkUser(userId);
@@ -108,8 +108,8 @@ public class BookingServiceImpl implements BookingService {
         return sortedBookings(booking, state.toUpperCase()).stream().map(bookingMapper::toDtoFromResponse).collect(Collectors.toList());
     }
 
-    @Transactional
     @Override
+    @Transactional
     public List<BookingResponseDto> findAllBookingsByItemsOwner(int userId, String state, Integer from, Integer size) {
         Pageable pageable = Paginator.getPageable(from, size, "end");
         userValidation.checkUser(userId);

@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.StatusBooking;
 import ru.practicum.shareit.booking.model.Booking;
@@ -44,6 +45,7 @@ public class ItemServiceImpl implements ItemService {
     private final BookingMapper bookingMapper;
 
     @Override
+    @Transactional
     public ItemDto createItem(ItemDto itemDto, Integer userId) {
         itemValidation.checkValidateItem(itemDto);
         userValidation.checkUser(userId);
@@ -64,6 +66,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional
     public ItemDto updateItem(ItemDto itemDto, int userId, int itemId) {
         itemValidation.checkItemByUser(userId, itemId);
         UserDto user = userMapper.toDto(userRepository.findById(userId).orElseThrow());
@@ -89,6 +92,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional
     public ItemWithBookingsDto findItem(int itemId) {
         ItemWithBookingsDto itemWithBookingsDto =
                 itemMapper.toItemWithBookingDto(itemRepository.findById(itemId).orElseThrow());
@@ -99,6 +103,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional
     public ItemWithBookingsDto findItem(int itemId, int userId) {
         boolean isOwner = false;
         Item item = itemValidation.checkItem(itemRepository.findById(itemId)).orElseThrow();
@@ -113,6 +118,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional
     public List<ItemWithBookingsDto> findAllItemForOwner(int userId, Integer from, Integer size) {
         Pageable pageable = Paginator.getPageable(from, size);
         userValidation.checkUser(userId);
@@ -127,10 +133,10 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional
     public List<ItemDto> searchAvailableItem(String text, Integer from, Integer size) {
         Pageable pageable = Paginator.getPageable(from, size);
         return itemRepository.searchByNameAndDescriptionAndAvailable(text, pageable).stream()
-                //.filter(Item::getAvailable)
                 .map(itemMapper::toDto)
                 .collect(Collectors.toList());
     }

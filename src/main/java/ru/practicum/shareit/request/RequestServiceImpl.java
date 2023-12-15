@@ -28,8 +28,8 @@ public class RequestServiceImpl implements RequestService {
     private final RequestRepository requestRepository;
     private final ItemService itemService;
 
-    @Transactional
     @Override
+    @Transactional
     public ItemRequestDto createRequest(int userId, ItemRequestDto requestDto) {
         userValidation.checkUser(userId);
         requestValidation.checkValidateResponse(requestDto);
@@ -51,8 +51,8 @@ public class RequestServiceImpl implements RequestService {
         return requestForResponse;
     }
 
-    @Transactional
     @Override
+    @Transactional
     public List<ItemRequestForResponseDto> findAllRequests(int userId, int from, int size) {
         Pageable pageable = Paginator.getPageable(from, size, "created");
         userValidation.checkUser(userId);
@@ -64,8 +64,8 @@ public class RequestServiceImpl implements RequestService {
         return requestsDto;
     }
 
-    @Transactional
     @Override
+    @Transactional
     public ItemRequestForResponseDto findRequestById(int requestId, int userId) {
         userValidation.checkUser(userId);
         checkExistRequest(requestId);
