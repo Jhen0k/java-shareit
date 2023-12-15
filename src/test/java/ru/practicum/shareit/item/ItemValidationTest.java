@@ -5,7 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ru.practicum.shareit.exception.ItemNotFoundException;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
@@ -30,7 +30,7 @@ public class ItemValidationTest {
     void checkItem() {
         Optional<Item> itemOptional = Optional.empty();
 
-        assertThrows(ItemNotFoundException.class, () -> itemValidation.checkItem(itemOptional));
+        assertThrows(NotFoundException.class, () -> itemValidation.checkItem(itemOptional));
         itemValidation.checkItem(Optional.of(new Item()));
 
     }
@@ -43,7 +43,7 @@ public class ItemValidationTest {
         doNothing().when(userValidation).checkUser(userId);
         when(itemRepository.existsItemByIdAndOwnerId(userId, itemId)).thenReturn(false);
 
-        assertThrows(ItemNotFoundException.class, () -> itemValidation.checkItemByUser(userId, itemId));
+        assertThrows(NotFoundException.class, () -> itemValidation.checkItemByUser(userId, itemId));
     }
 
     @Test

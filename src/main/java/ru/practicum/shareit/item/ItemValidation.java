@@ -3,7 +3,7 @@ package ru.practicum.shareit.item;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.exception.ItemNotFoundException;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
@@ -20,7 +20,7 @@ public class ItemValidation {
 
     public Optional<Item> checkItem(Optional<Item> itemOptional) {
         if (itemOptional.isEmpty()) {
-            throw new ItemNotFoundException("Вещи с указанным Id не найдено.");
+            throw new NotFoundException("Вещи с указанным Id не найдено.");
         }
         return itemOptional;
     }
@@ -28,7 +28,7 @@ public class ItemValidation {
     public void checkItemByUser(int userId, int itemId) {
         userValidation.checkUser(userId);
         if (!itemRepository.existsItemByIdAndOwnerId(itemId, userId)) {
-            throw new ItemNotFoundException("Запрашиваемая вещь отсутствует у данного пользователя.");
+            throw new NotFoundException("Запрашиваемая вещь отсутствует у данного пользователя.");
         }
     }
 
