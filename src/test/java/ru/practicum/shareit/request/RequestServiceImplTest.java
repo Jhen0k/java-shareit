@@ -1,5 +1,6 @@
 package ru.practicum.shareit.request;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -40,6 +41,7 @@ public class RequestServiceImplTest {
     private ItemService itemService;
 
     @Test
+    @DisplayName("Создать запрос")
     void createRequest() {
         int userId = 0;
         ItemRequest itemRequest = new ItemRequest();
@@ -63,6 +65,7 @@ public class RequestServiceImplTest {
     }
 
     @Test
+    @DisplayName("Поиск всех запросов по пользователю")
     void findAllRequestsByUserTest() {
         int userId = 1;
         List<ItemRequest> requests = new ArrayList<>();
@@ -87,6 +90,7 @@ public class RequestServiceImplTest {
     }
 
     @Test
+    @DisplayName("Поиск всех запросов")
     void findAllRequestsTest() {
         int userId = 1;
         List<ItemRequest> itemRequests = new ArrayList<>();
@@ -111,6 +115,7 @@ public class RequestServiceImplTest {
     }
 
     @Test
+    @DisplayName("Поиск запроса по id")
     void findRequestById() {
         int requestId = 1;
         int userId = 1;

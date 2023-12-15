@@ -1,5 +1,6 @@
 package ru.practicum.shareit.item;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -26,6 +27,7 @@ public class ItemRepositoryTest {
     private RequestRepository requestRepository;
 
     @Test
+    @DisplayName("Поиск вещи по id владельца")
     void findItemByOwnerId() {
         User user1 = userRepository.save(new User(null, "mail@mail", "name"));
         itemRepository.save(new Item(null, user1, "name", "description", true));
@@ -40,6 +42,7 @@ public class ItemRepositoryTest {
     }
 
     @Test
+    @DisplayName("Найти по имени, описанию, свободная вещь")
     void searchByNameAndDescriptionAndAvailable() {
         User userFirst = userRepository.save(new User(null, "mail@mail", "name"));
         itemRepository.save(new Item(null, userFirst, "вещь", "description", true));
@@ -55,6 +58,7 @@ public class ItemRepositoryTest {
     }
 
     @Test
+    @DisplayName("Проверить вещь по id, свободная и она существует")
     void existsItemByIdAndAvailableIsTrue_whenItemExistAndAvailableIsTrue_thenReturnTrue() {
         User userFirst = userRepository.save(new User(null, "name", "email@"));
         Item itemFirst = itemRepository.save(new Item(null, userFirst, "вещь", "description", true));
@@ -66,6 +70,7 @@ public class ItemRepositoryTest {
     }
 
     @Test
+    @DisplayName("Проверить вещь по id, свободная и она не существует")
     void existsItemByIdAndAvailableIsTrue_whenItemNonExist_thenReturnFalse() {
         User userFirst = userRepository.save(new User(null, "name", "email@"));
         itemRepository.save(new Item(null, userFirst, "вещь", "description", true));
@@ -77,6 +82,7 @@ public class ItemRepositoryTest {
     }
 
     @Test
+    @DisplayName("Проверить вещь по id,вещь не свободная и она существует")
     void existsItemByIdAndAvailableIsTrue_whenItemExistAndAvailableIsFalse_thenReturnFalse() {
         User userFirst = userRepository.save(new User(null, "name", "email@"));
         itemRepository.save(new Item(null, userFirst, "вещь", "description", true));
@@ -88,6 +94,7 @@ public class ItemRepositoryTest {
     }
 
     @Test
+    @DisplayName("Проверить вещь по id и id владельца")
     void existsItemByIdAndOwnerId_whenItemByOwner_thenReturnTrue() {
         User userFirst = userRepository.save(new User(null, "mail@mail", "name"));
         Item itemFirst = itemRepository.save(new Item(null, userFirst, "вещь", "description", true));
@@ -101,6 +108,7 @@ public class ItemRepositoryTest {
     }
 
     @Test
+    @DisplayName("Проверить вещь по id и id владельца, возвращает false")
     void existsItemByIdAndOwnerId_whenItemNonByOwner_thenReturnFalse() {
         User userFirst = userRepository.save(new User(null, "mail@mail", "name"));
         Item itemFirst = itemRepository.save(new Item(null, userFirst, "вещь", "description", true));
@@ -114,6 +122,7 @@ public class ItemRepositoryTest {
     }
 
     @Test
+    @DisplayName("Поиск всех вещей по id запроса")
     void findAllByItemRequest_id() {
         User userFirst = userRepository.save(new User(null, "mail@mail", "name"));
         userRepository.save(new User(null, "new@mail", "name"));

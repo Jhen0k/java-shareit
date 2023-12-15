@@ -1,5 +1,6 @@
 package ru.practicum.shareit.request;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -15,6 +16,7 @@ public class RequestValidationTest {
     private RequestValidation requestValidation;
 
     @Test
+    @DisplayName("Валидация ответа")
     void checkValidateResponseTest() {
         ItemRequestDto itemRequestDto = new ItemRequestDto();
 

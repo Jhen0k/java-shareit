@@ -1,5 +1,6 @@
 package ru.practicum.shareit.item;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -27,6 +28,7 @@ public class ItemValidationTest {
     private ItemRepository itemRepository;
 
     @Test
+    @DisplayName("Получить исключение об отсутствии вещи")
     void checkItem() {
         Optional<Item> itemOptional = Optional.empty();
 
@@ -36,6 +38,7 @@ public class ItemValidationTest {
     }
 
     @Test
+    @DisplayName("Получить исключение, что не такой вещи у пользователя")
     void checkItemByUser() {
         int userId = 1;
         int itemId = 1;
@@ -47,6 +50,7 @@ public class ItemValidationTest {
     }
 
     @Test
+    @DisplayName("Получить исключение при валидации полей вещи")
     void checkValidateItem() {
         ItemDto itemDto = new ItemDto();
         itemDto.setId(1);

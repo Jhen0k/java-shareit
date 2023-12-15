@@ -1,6 +1,7 @@
 package ru.practicum.shareit.request;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -33,6 +34,7 @@ public class ItemRequestControllerTest {
     private MockMvc mvc;
 
     @Test
+    @DisplayName("Создать запрос")
     void createRequest() throws Exception {
         int itemResponseId = 1;
         int userId = 1;
@@ -52,6 +54,7 @@ public class ItemRequestControllerTest {
     }
 
     @Test
+    @DisplayName("Поиск всех запросов по пользователю")
     void findAllRequestForUserTest() throws Exception {
         int userId = 2;
         List<ItemRequestForResponseDto> responsesDto = new ArrayList<>();
@@ -66,6 +69,7 @@ public class ItemRequestControllerTest {
     }
 
     @Test
+    @DisplayName("Поиск всех запросов")
     void findAllRequestTest() throws Exception {
         int userId = 2;
         int from = 1;
@@ -84,6 +88,7 @@ public class ItemRequestControllerTest {
     }
 
     @Test
+    @DisplayName("Поиск запроса по id")
     void findRequestByIdTest() throws Exception {
         int itemRequestId = 1;
         int userId = 2;

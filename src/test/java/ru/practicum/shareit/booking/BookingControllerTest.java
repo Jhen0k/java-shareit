@@ -1,6 +1,7 @@
 package ru.practicum.shareit.booking;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -32,6 +33,7 @@ public class BookingControllerTest {
     private final String end = "2023-12-13T16:18:00";
 
     @Test
+    @DisplayName("Создать бронирование")
     void createBooking() throws Exception {
         int userId = 1;
         int itemId = 2;
@@ -51,6 +53,7 @@ public class BookingControllerTest {
     }
 
     @Test
+    @DisplayName("Обновить бронирование")
     void updateStatusBooking() throws Exception {
         int userId = 1;
         int itemId = 2;
@@ -70,6 +73,7 @@ public class BookingControllerTest {
     }
 
     @Test
+    @DisplayName("Поиск бронирования по id")
     void findBooking() throws Exception {
         int userId = 1;
         int itemId = 2;
@@ -87,6 +91,7 @@ public class BookingControllerTest {
     }
 
     @Test
+    @DisplayName("Поиск бронирования по пользователю")
     void findBookingsByUser() throws Exception {
         int userId = 1;
         int itemId = 2;
@@ -107,6 +112,7 @@ public class BookingControllerTest {
     }
 
     @Test
+    @DisplayName("Поиск всех бронирований по вещам хозяина")
     void findAllBookingsByItemsOwner() throws Exception {
         int userId = 1;
         int itemId = 2;

@@ -2,6 +2,7 @@ package ru.practicum.shareit.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -53,6 +54,7 @@ public class UserControllerTest {
     }
 
     @Test
+    @DisplayName("Сохранить пользователя")
     void saveNewUser() throws Exception {
         when(userService.createUser(any())).thenReturn(userDto);
 
@@ -68,6 +70,7 @@ public class UserControllerTest {
     }
 
     @Test
+    @DisplayName("Обновить пользователя")
     void updateUser() throws Exception {
         UserDto updateUser = new UserDto(1, "update@mail.ru", "updateName");
 
@@ -85,6 +88,7 @@ public class UserControllerTest {
     }
 
     @Test
+    @DisplayName("Получить всех пользователей")
     void getAllUsers() throws Exception {
         usersDto.add(userDto);
         usersDto.add(userDto);
@@ -97,6 +101,7 @@ public class UserControllerTest {
     }
 
     @Test
+    @DisplayName("Получить пользователя по id")
     void getUserById() throws Exception {
 
         mvc.perform(get("/users/{userId}", userId))
@@ -106,6 +111,7 @@ public class UserControllerTest {
     }
 
     @Test
+    @DisplayName("Удалить пользователя")
     void deleteUser() throws Exception {
 
         mvc.perform(delete("/users/1")

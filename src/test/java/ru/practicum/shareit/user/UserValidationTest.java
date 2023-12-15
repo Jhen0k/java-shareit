@@ -1,5 +1,6 @@
 package ru.practicum.shareit.user;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -22,6 +23,7 @@ public class UserValidationTest {
     private UserRepository userRepository;
 
     @Test
+    @DisplayName("Валидация пользователя")
     public void validateUserTest() {
         int userId = 1;
         User userNameIsNull = new User(userId, null, "Jon");
@@ -37,6 +39,7 @@ public class UserValidationTest {
     }
 
     @Test
+    @DisplayName("Существует ли пользователь.")
     public void checkUser() {
         int userId = 1;
 

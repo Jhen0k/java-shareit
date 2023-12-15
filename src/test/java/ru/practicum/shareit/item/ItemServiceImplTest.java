@@ -1,5 +1,6 @@
 package ru.practicum.shareit.item;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -65,6 +66,7 @@ public class ItemServiceImplTest {
     private BookingMapper bookingMapper;
 
     @Test
+    @DisplayName("Создать вещь")
     void createItem() {
         int userId = 1;
         int requestId = 1;
@@ -108,6 +110,7 @@ public class ItemServiceImplTest {
     }
 
     @Test
+    @DisplayName("Обновить вещь")
     void updateItem() {
         int userId = 1;
         int itemId = 1;
@@ -160,6 +163,7 @@ public class ItemServiceImplTest {
     }
 
     @Test
+    @DisplayName("Поиск вещи с 1 параметром")
     void findItemWithOneParam() {
         int itemId = 1;
         User user = User.builder().id(1).name("name").email("mail@mail.ru").build();
@@ -191,6 +195,7 @@ public class ItemServiceImplTest {
     }
 
     @Test
+    @DisplayName("Поиск вещи с 2 параметрами")
     void findItemWithTwoParam() {
         int userId = 1;
         int itemId = 1;
@@ -235,6 +240,7 @@ public class ItemServiceImplTest {
     }
 
     @Test
+    @DisplayName("Поиск всех вещей пользователя")
     void findAllItemForOwner() {
         int userId = 1;
         int from = 0;
@@ -265,6 +271,7 @@ public class ItemServiceImplTest {
     }
 
     @Test
+    @DisplayName("Найти доступную вещь")
     void searchAvailableItem() {
         int from = 0;
         int size = 10;
@@ -288,6 +295,7 @@ public class ItemServiceImplTest {
     }
 
     @Test
+    @DisplayName("Поиск вещи по запросу")
     void findItemForRequest() {
         int requestId = 1;
         Item item = new Item(2, "name", "description", true);

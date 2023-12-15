@@ -1,5 +1,6 @@
 package ru.practicum.shareit.item;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -16,6 +17,7 @@ public class CommentValidationTest {
     private CommentValidation commentValidation;
 
     @Test
+    @DisplayName("Получить исключение после валидации комментария")
     void checkValidateComment() {
         CommentDto commentDto = new CommentDto(1, null, "name", null);
 

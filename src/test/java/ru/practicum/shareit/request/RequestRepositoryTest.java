@@ -1,5 +1,6 @@
 package ru.practicum.shareit.request;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -31,6 +32,7 @@ public class RequestRepositoryTest {
     private RequestRepository requestRepository;
 
     @Test
+    @DisplayName("Поиск всех пользователей по запросу или id")
     void findAllByRequestor_IdIsTest() {
         User user = userRepository.save(new User(null, "mail@mail.ru", "name"));
         itemRepository.save(new Item(null, user, "name", "description", true));
@@ -43,6 +45,7 @@ public class RequestRepositoryTest {
     }
 
     @Test
+    @DisplayName("Поиск всех пользователей отсортированных в нужном порядке")
     void findAllBySortTest() {
         User user1 = userRepository.save(new User(null, "mail1@email", "name"));
         User user2 = userRepository.save(new User(null, "mail2@email", "name"));

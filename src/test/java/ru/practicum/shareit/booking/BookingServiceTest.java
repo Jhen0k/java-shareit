@@ -1,5 +1,6 @@
 package ru.practicum.shareit.booking;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -54,6 +55,7 @@ public class BookingServiceTest {
     private final LocalDateTime endLocalDataTime = LocalDateTime.of(2024, 12, 13, 21, 12, 10);
 
     @Test
+    @DisplayName("Создать бронирование")
     void createBooking() {
         int itemId = 1;
         int userId = 2;
@@ -78,6 +80,7 @@ public class BookingServiceTest {
     }
 
     @Test
+    @DisplayName("Обновить бронирование")
     void updateStatusBooking() {
         int userId = 2;
         int bookingId = 1;
@@ -113,6 +116,7 @@ public class BookingServiceTest {
     }
 
     @Test
+    @DisplayName("Поиск бронирования по id")
     void findBooking() {
         int userId = 2;
         int bookingId = 1;
@@ -135,6 +139,7 @@ public class BookingServiceTest {
     }
 
     @Test
+    @DisplayName("Поиск всех бронирований по пользователю")
     void findBookingsByUser() {
         int userId = 1;
         int bookingId = 2;
@@ -157,6 +162,7 @@ public class BookingServiceTest {
     }
 
     @Test
+    @DisplayName("Поиск бронирования по пользователю и статусу")
     void findBookingsByUser_whenStateCurrent() {
         int userId = 1;
         int bookingId = 2;
@@ -205,6 +211,7 @@ public class BookingServiceTest {
     }
 
     @Test
+    @DisplayName("Поиск всех бронирований по вещам хозяина")
     void findAllBookingsByItemsOwner() {
         int userId = 1;
         int bookingId = 2;

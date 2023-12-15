@@ -1,5 +1,6 @@
 package ru.practicum.shareit.user;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -33,6 +34,7 @@ public class UserServiceImplTest {
 
 
     @Test
+    @DisplayName("Сохранить пользователя")
     void saveUser() {
         int userId = 1;
         UserDto userDto = new UserDto(userId, "join@mail.ru", "Jon");
@@ -61,6 +63,7 @@ public class UserServiceImplTest {
     }
 
     @Test
+    @DisplayName("Обновить пользователя")
     void updateUser() {
         int userId = 1;
         UserDto updateUser = UserDto.builder().id(userId).email("join@mail.ru").name("Jon").build();
@@ -94,6 +97,7 @@ public class UserServiceImplTest {
     }
 
     @Test
+    @DisplayName("Поиск пользователя")
     void findUser() {
         int userId = 1;
         UserDto userDto = new UserDto(userId, "join@mail.ru", "Jon");
@@ -120,6 +124,7 @@ public class UserServiceImplTest {
     }
 
     @Test
+    @DisplayName("Поиск всех пользователей")
     void getAllUsers() {
         List<User> users = List.of(new User(), new User());
 
@@ -134,6 +139,7 @@ public class UserServiceImplTest {
     }
 
     @Test
+    @DisplayName("Удалить пользователя")
     void deleteUser() {
         int userId = 1;
 

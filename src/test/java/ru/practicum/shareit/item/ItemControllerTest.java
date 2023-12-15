@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -36,6 +37,7 @@ public class ItemControllerTest {
     MockMvc mvc;
 
     @Test
+    @DisplayName("Создать вещь")
     void createItem() throws Exception {
         int itemId = 1;
         int userId = 2;
@@ -55,6 +57,7 @@ public class ItemControllerTest {
     }
 
     @Test
+    @DisplayName("Обновить вещь")
     void updateItem() throws Exception {
         int itemId = 1;
         int userId = 2;
@@ -74,6 +77,7 @@ public class ItemControllerTest {
     }
 
     @Test
+    @DisplayName("Поиск Вещи по id")
     void findItem() throws Exception {
         int itemId = 1;
         int userId = 2;
@@ -94,6 +98,7 @@ public class ItemControllerTest {
     }
 
     @Test
+    @DisplayName("Поиск всех вещей по хозяину")
     void findAllItemForOwner() throws Exception {
         int userId = 2;
         int from = 1;
@@ -112,6 +117,7 @@ public class ItemControllerTest {
     }
 
     @Test
+    @DisplayName("Найти свободную вещь")
     void searchAvailableItem() throws Exception {
         String text = "search text";
         int from = 1;
@@ -136,6 +142,7 @@ public class ItemControllerTest {
     }
 
     @Test
+    @DisplayName("Создать комментарий")
     void createComment() throws Exception {
         int userId = 1;
         int itemId = 2;

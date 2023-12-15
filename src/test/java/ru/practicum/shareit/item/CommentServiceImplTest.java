@@ -1,5 +1,6 @@
 package ru.practicum.shareit.item;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -51,6 +52,7 @@ public class CommentServiceImplTest {
     private final LocalDateTime endLocalDataTime = LocalDateTime.of(2024, 12, 13, 21, 12, 10);
 
     @Test
+    @DisplayName("Создать комментарий")
     void createComment() {
         int userId = 1;
         int itemId = 1;

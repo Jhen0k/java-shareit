@@ -1,5 +1,6 @@
 package ru.practicum.shareit.booking;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -45,6 +46,7 @@ public class BookingValidationTest {
     private final String end = "2023-12-13T20:12:10";
 
     @Test
+    @DisplayName("Получить исключение после валидации бронирования")
     void checkValidateBooking() {
         int itemId = 1;
         int userId = 1;
@@ -86,6 +88,7 @@ public class BookingValidationTest {
     }
 
     @Test
+    @DisplayName("Проверить существует ли бронирование")
     void checkExistBooking() {
         int bookingId = 1;
 
