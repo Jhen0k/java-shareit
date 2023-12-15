@@ -9,7 +9,6 @@ import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -21,8 +20,8 @@ public class UserServiceImpl implements UserService {
     private final UserValidation userValidation;
 
 
-    @Transactional
     @Override
+    @Transactional
     public UserDto createUser(UserDto user) {
         User userEntity = userMapper.toEntity(user);
         userValidation.validateUser(userEntity);
@@ -30,11 +29,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public UserDto updateUser(Integer id, UserDto userDto) {
         userValidation.checkUser(id);
         userDto.setId(id);
         User updatedUser = userMapper.toEntity(userDto);
-        User oldUser = Optional.of(repository.findById(id)).get().orElseThrow();
+        User oldUser = repository.findById(id).orElseThrow();
 
         if (updatedUser.getName() != null) {
             oldUser.setName(updatedUser.getName());
@@ -46,18 +46,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public UserDto findUser(Integer id) {
         userValidation.checkUser(id);
         return userMapper.toDto(repository.findById(id).orElseThrow());
     }
 
-    @Transactional(readOnly = true)
     @Override
+    @Transactional(readOnly = true)
     public List<UserDto> getAllUsers() {
         return repository.findAll().stream().map(userMapper::toDto).collect(Collectors.toList());
     }
 
     @Override
+    @Transactional
     public void deleteUser(Integer id) {
         userValidation.checkUser(id);
         repository.deleteById(id);

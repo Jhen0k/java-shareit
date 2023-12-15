@@ -2,12 +2,13 @@ package ru.practicum.shareit.item.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import ru.practicum.shareit.request.model.ItemRequest;
+import lombok.NoArgsConstructor;
 import ru.practicum.shareit.user.dto.UserDto;
 
 import java.util.List;
 
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
 public class ItemDto {
     private Integer id;
@@ -15,6 +16,13 @@ public class ItemDto {
     private String name;
     private String description;
     private Boolean available;
-    private ItemRequest itemRequest;
+    private Integer requestId;
     private List<CommentDto> comments;
+
+    public ItemDto(Integer id, String name, String description, Boolean available) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.available = available;
+    }
 }

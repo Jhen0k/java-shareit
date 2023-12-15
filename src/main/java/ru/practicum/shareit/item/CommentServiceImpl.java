@@ -2,6 +2,7 @@ package ru.practicum.shareit.item;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.StatusBooking;
 import ru.practicum.shareit.booking.model.Booking;
@@ -31,6 +32,7 @@ public class CommentServiceImpl implements CommentService {
     private final CommentMapper commentMapper;
 
     @Override
+    @Transactional
     public CommentDto createComment(CommentDto commentDto, int userId, int itemId) {
         commentValidation.checkValidateComment(commentDto);
         itemValidation.checkItem(itemRepository.findById(itemId));

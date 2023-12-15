@@ -2,12 +2,13 @@ package ru.practicum.shareit.request.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class ItemRequestDto {
     private int id;
-    private final int userId;
-    private final String name;
-    private final String description;
+    private String description;
+    private String created;
 }

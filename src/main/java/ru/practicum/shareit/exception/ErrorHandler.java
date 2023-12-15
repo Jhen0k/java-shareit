@@ -12,8 +12,8 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleItemNotFoundException(final ItemNotFoundException e) {
-        log.warn("Conflict exception:", e);
+    public ErrorResponse notFoundExceptionException(final NotFoundException e) {
+        log.warn("NotFoundException exception: ", e);
         return new ErrorResponse(e.getMessage());
     }
 
@@ -25,16 +25,9 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleUserNotFoundException(final UserNotFoundException e) {
-        log.warn("User not found exception: ", e);
-        return new ErrorResponse(e.getMessage());
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse handleUniqueEmailException(final UniqueEmailException e) {
-        log.warn("Unique email exception: ", e);
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handlerException(final Exception e) {
+        log.warn("Exception", e);
         return new ErrorResponse(e.getMessage());
     }
 }
