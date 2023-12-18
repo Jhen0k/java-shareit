@@ -7,7 +7,7 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - db
+      - server
     environment:
       - SHAREIT_SERVER_URL=http://server:9090
 
@@ -17,6 +17,7 @@ services:
     container_name: shareit-server
     ports:
       - "8090:8090"
+      - "9091:9091"
     depends_on:
       - db
     environment:
